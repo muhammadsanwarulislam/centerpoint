@@ -6,9 +6,9 @@ const store = createStore({
 
         user: {
             data: {
-                name : 'muhammad'
+                
             },
-            token: null
+            token: 123
         },
     },
 
