@@ -13,42 +13,24 @@
             </div>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
-                <a
+                <router-link
                   v-for="item in navigation"
                   :key="item.name"
-                  :href="item.href"
+                  :to="item.to.name"
+                  active-class="bg-blue-900 text-white"
                   :class="[
-                    item.current
-                      ? 'bg-gray-900 text-white'
+                    this.$route.name === item.to.name
+                      ? ''
                       : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                     'px-3 py-2 rounded-md text-sm font-medium',
                   ]"
-                  :aria-current="item.current ? 'page' : undefined"
-                  >{{ item.name }}</a
+                  >{{ item.name }}</router-link
                 >
               </div>
             </div>
           </div>
           <div class="hidden md:block">
             <div class="ml-4 flex items-center md:ml-6">
-              <button
-                type="button"
-                class="
-                  bg-gray-800
-                  p-1
-                  rounded-full
-                  text-gray-400
-                  hover:text-white
-                  focus:outline-none
-                  focus:ring-2
-                  focus:ring-offset-2
-                  focus:ring-offset-gray-800
-                  focus:ring-white
-                "
-              >
-                <span class="sr-only">View notifications</span>
-                <BellIcon class="h-6 w-6" aria-hidden="true" />
-              </button>
 
               <!-- Profile dropdown -->
               <Menu as="div" class="ml-3 relative">
@@ -100,17 +82,14 @@
                     "
                   >
                     <MenuItem
-                      v-for="item in userNavigation"
-                      :key="item.name"
                       v-slot="{ active }"
                     >
                       <a
-                        :href="item.href"
+                        @click="logout"
                         :class="[
-                          active ? 'bg-gray-100' : '',
-                          'block px-4 py-2 text-sm text-gray-700',
+                          'block px-4 py-2 text-sm text-gray-700 cursor-pointer',
                         ]"
-                        >{{ item.name }}</a
+                        >Sign out</a
                       >
                     </MenuItem>
                   </MenuItems>
@@ -175,33 +154,12 @@
                 {{ user.email }}
               </div>
             </div>
-            <button
-              type="button"
-              class="
-                ml-auto
-                bg-gray-800
-                flex-shrink-0
-                p-1
-                rounded-full
-                text-gray-400
-                hover:text-white
-                focus:outline-none
-                focus:ring-2
-                focus:ring-offset-2
-                focus:ring-offset-gray-800
-                focus:ring-white
-              "
-            >
-              <span class="sr-only">View notifications</span>
-              <BellIcon class="h-6 w-6" aria-hidden="true" />
-            </button>
+
           </div>
           <div class="mt-3 px-2 space-y-1">
             <DisclosureButton
-              v-for="item in userNavigation"
-              :key="item.name"
               as="a"
-              :href="item.href"
+              @click="logout"
               class="
                 block
                 px-3
@@ -210,9 +168,9 @@
                 text-base
                 font-medium
                 text-gray-400
-                hover:text-white hover:bg-gray-700
+                hover:text-white hover:bg-gray-700 cursor-pointer
               "
-              >{{ item.name }}</DisclosureButton
+              >Sign out</DisclosureButton
             >
           </div>
         </div>
@@ -236,18 +194,11 @@ import {
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/vue/outline";
 import { useStore } from 'vuex'
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Team", href: "#", current: false },
-  { name: "Projects", href: "#", current: false },
-  { name: "Calendar", href: "#", current: false },
-  { name: "Reports", href: "#", current: false },
-];
-const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
+  { name: "Dashboard", to: {name: 'Dashboard'} },
+  { name: "Surveys", to: {name: "Surveys"}  },
 ];
 
 export default {
@@ -265,11 +216,17 @@ export default {
   },
   setup() {
     const store = useStore()
+    const router = useRouter()
+
+    function logout() {
+      store.commit('logout')
+      router.push({ name: 'Login' })
+    }
 
     return {
       user: computed(() =>store.state.user.data),
       navigation,
-      userNavigation,
+      logout
     };
   },
 };
