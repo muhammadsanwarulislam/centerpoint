@@ -22,7 +22,7 @@ const routes = [
                 component: Dashboard
             },
             {
-                path: '/Surveys',
+                path: '/surveys',
                 name: Surveys,
                 component: Surveys
             }
@@ -54,9 +54,9 @@ const router = createRouter({
     routes
 })
 
-router.beforeEach((to, from, next) => {
-    if (to.meta.requiresAuth && !store.state.user.token) next({ name: 'Login' })
-    // else if (store.state.user.token && (to.meta.isGuest)) next({ name: 'Dashboard' }) 
-    else next()
+router.beforeEach(async (to, from) => {
+    if (to.meta.requiresAuth && !store.state.user.token) return '/login'
+    else if (store.state.user.token && (to.meta.isGuest)) return '/dashboard'
   })
+
 export default router
