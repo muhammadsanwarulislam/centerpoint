@@ -8,3 +8,6 @@ https://github.com/muhammadsanwarulislam/centerpoint/tree/6b243e84a10d03bb42fdc9
 
 Third commit(implement logout function and page compoent create) (Day-03)
 https://github.com/muhammadsanwarulislam/centerpoint/tree/e86247d1603a5eb9a13c3c8fbba51893500fa802/backend
+
+Fourth commit(implement user authentication functionality) (Day-04)
+https://github.com/muhammadsanwarulislam/centerpoint/tree/4f27e49f87f77892c464ee35eb74faf8e0a8e965/backend
