@@ -28,6 +28,7 @@ class AuthController extends Controller
 
         // return response([ 'user' => $user, 'token' => $token]);
         return $this->json('User registered successfully',[
+            'user' => $user,
             'token' => $token,
         ]);
     }
