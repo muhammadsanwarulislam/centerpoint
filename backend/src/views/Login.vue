@@ -158,10 +158,10 @@ function login(ev) {
       // router.push({
       //   name: 'Dashboard'
       // })
-      window.location = 'Dashboard'
+      window.location.href = '/dashboard'
     })
     .catch(err => {
-        console.log(err.response.data)
+        console.log(err)
         errorMsg.value = err.response.data.message
       })
 }

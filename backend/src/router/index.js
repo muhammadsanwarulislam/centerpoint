@@ -18,12 +18,12 @@ const routes = [
         children: [
             {
                 path: '/dashboard',
-                name: Dashboard,
+                name: 'Dashboard',
                 component: Dashboard
             },
             {
                 path: '/surveys',
-                name: Surveys,
+                name: 'Surveys',
                 component: Surveys
             }
         ]
