@@ -14,3 +14,6 @@ https://github.com/muhammadsanwarulislam/centerpoint/tree/4f27e49f87f77892c464ee
 
 Fifth commit (implement user authentication functionality using axios) (Day-05)
 https://github.com/muhammadsanwarulislam/centerpoint/tree/55aa3f293034994a8dafb9d124b13ae42ed669db/backend
+
+Sixth commit (implement user logout functionality) (Day-06)
+https://github.com/muhammadsanwarulislam/centerpoint/tree/52a9bc8b8679b3df7a65f8228cb48e9e539f0ab6/backend
