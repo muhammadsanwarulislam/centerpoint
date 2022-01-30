@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API\Backend;
 
-use auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -21,15 +20,12 @@ class AuthController extends Controller
         ]);
 
         $data['password'] = bcrypt($request->password);
-
         $user = User::create($data);
-
         $token = $user->createToken('API Token')->accessToken;
 
-        // return response([ 'user' => $user, 'token' => $token]);
         return $this->json('User registered successfully',[
             'user' => $user,
-            'token' => $token,
+            'access_token' => $token,
         ]);
     }
 
@@ -43,13 +39,27 @@ class AuthController extends Controller
         if (!auth()->attempt($data)) {
             return $this->bad('Invalid Credentials');
         }
-
         $token = auth()->user()->createToken('API Token')->accessToken;
-        // return response(['user' => auth()->user(), 'token' => $token]);
+
         return $this->json('Login successfully', [
             'access_token'  => $token,
             'access_type'   => 'Bearer'
         ]);
 
     }
+
+    public function logout(Request $request)
+    {
+        try {
+            $request->user()->token()->revoke();
+
+            return $this->json([
+                'type' => 'logout_success',
+                'message' => 'User logged out.'
+            ]);
+        } catch (Exception $e) {
+            return $this->bad('Fail to logged out',['exception' => $e]);
+        }
+    }
+
 }
