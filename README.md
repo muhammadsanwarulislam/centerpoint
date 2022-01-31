@@ -1,7 +1,16 @@
-# Vue 3 + Vite
+# Backend APP(vue js) installations
+Follow the steps mentioned below to install and run the project.
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+1. Clone or download the repository
+2. Go to the project directory and run `npm install`
+3. Run `npm run dev` from the project root and visit `http://localhost:3000/`
 
-## Recommended IDE Setup
+# Backend API(Laravel) installations
+Follow the steps mentioned below to install and run the project.
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+1. Clone or download the repository
+2. Go to the project directory and run `composer install`
+3. Create `.env` file by copying the `.env.example`. You may use the command to do that `cp .env.example .env`
+4. Update the database name and credentials in `.env` file
+5. Run the command `php artisan migrate:fresh --seed`
+6. You may create a virtualhost entry to access the application or run `php artisan serve` from the project root and visit `http://127.0.0.1:8000`
