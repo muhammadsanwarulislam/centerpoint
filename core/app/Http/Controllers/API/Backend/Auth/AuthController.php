@@ -1,15 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\API\Backend;
+namespace App\Http\Controllers\API\Backend\Auth;
+
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Repository\User\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\API\JsonResponseTrait;
 
 class AuthController extends Controller
 {
     use JsonResponseTrait;
+
+    protected $authRepo;
+
+    function __construct(UserRepository $authRepo)
+    {
+        $this->authRepo   =  $authRepo;
+    }
 
     public function register(Request $request)
     {
@@ -20,12 +29,11 @@ class AuthController extends Controller
         ]);
 
         $data['password'] = bcrypt($request->password);
-        $user = User::create($data);
-        $token = $user->createToken('API Token')->accessToken;
+        $user = $this->authRepo->create($request->all());
 
         return $this->json('User registered successfully',[
             'user' => $user,
-            'access_token' => $token,
+            'access_token' => $this->authRepo->generateAccessToken($user),
         ]);
     }
 
@@ -39,10 +47,9 @@ class AuthController extends Controller
         if (!auth()->attempt($data)) {
             return $this->bad('Invalid Credentials');
         }
-        $token = auth()->user()->createToken('API Token')->accessToken;
-
+    
         return $this->json('Login successfully', [
-            'access_token'  => $token,
+            'access_token'  => $this->authRepo->generateAccessToken($user = auth()->user()),
             'access_type'   => 'Bearer'
         ]);
 
@@ -50,16 +57,9 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        try {
-            $request->user()->token()->revoke();
+        $request->user()->token()->revoke();
 
-            return $this->json([
-                'type' => 'logout_success',
-                'message' => 'User logged out.'
-            ]);
-        } catch (Exception $e) {
-            return $this->bad('Fail to logged out',['exception' => $e]);
-        }
+        return $this->json('User logged out.',['type' => 'logout_success']);
     }
 
 }
