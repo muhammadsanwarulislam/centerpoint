@@ -1,0 +1,47 @@
+<?php
+
+namespace Repository\User;
+
+use App\Models\User;
+use Hamcrest\Type\IsBoolean;
+use Repository\BaseRepository;
+class UserRepository extends BaseRepository
+{
+
+    public function model()
+    {
+        return User::class;
+    }
+
+    public function getAllUsersWithRole()
+    {
+        return $this->model()::with('role')->paginate(10);
+    }
+
+    public function findByIDWithRole($id)
+    {
+        return $this->model()::with('role')->find($id);
+    }
+
+    public function getLoggedINUserPermissions($userId)
+    {
+        return $this->model()::select('permissions.name')
+                    ->where('users.id', $userId)
+                    ->join('roles', 'users.role_id', '=', 'roles.id')
+                    ->join('role_permission', 'roles.id', '=', 'role_permission.role_id')
+                    ->join('permissions', 'role_permission.permission_id', '=', 'permissions.id')
+                    ->get();
+        
+    }
+    
+    public function generateAccessToken(User $user): string
+    {
+        return $user->createToken('authToken')->accessToken;
+    }
+
+    public function generateDefaultPassword(): string
+    {
+        return '12345678';
+    }
+
+}
