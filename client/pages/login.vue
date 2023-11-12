@@ -1,42 +1,53 @@
-<script setup>
+<script setup lang="ts">
+import { reactive } from 'vue';
 import { useAuthStore } from "../stores/auth";
+import { z } from 'zod'
+import type { FormSubmitEvent } from '#ui/types'
+
 definePageMeta({
   middleware: "is-logged-in",
   layout: "frontend",
 });
-const userStore = useAuthStore();
-const email = ref(null);
-const password = ref(null);
 
-const singIn = async () => {
+const userStore = useAuthStore();
+const schema = z.object({
+  email: z.string().email('Invalid email'),
+  password: z.string().min(8, 'Must be at least 8 characters')
+})
+
+type Schema = z.output<typeof schema>
+
+const state = reactive({
+  email: undefined,
+  password: undefined
+})
+
+async function onSubmit (event: FormSubmitEvent<Schema>) {
   await userStore.signIn({
-    email: email.value,
-    password: password.value,
+    email: state.email,
+    password: state.password,
   });
   return navigateTo("/");
-};
+}
 </script>
+
 <template>
-  <div class="container mx-auto p-4">
-    <div class="mx-auto max-w-md">
-      <form @submit.prevent="singIn">
-        <div class="mb-4">
-          <label for="email" class="mb-2 block text-sm font-bold text-gray-700">Email</label>
-          <input type="email" id="email" v-model="email"
-            class="w-full rounded border p-2 focus:border-blue-400 focus:outline-none" required />
-        </div>
-        <div class="mb-4">
-          <label for="password" class="mb-2 block text-sm font-bold text-gray-700">Password</label>
-          <input type="password" id="password" v-model="password"
-            class="w-full rounded border p-2 focus:border-blue-400 focus:outline-none" required />
-        </div>
-        <div class="text-center">
-          <button type="submit" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none">
-            Login
-          </button>
-        </div>
-      </form>
-    </div>
+  <div class="shadow-md rounded-md w-96">
+    <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
+      <UFormGroup label="Email" name="email">
+        <UInput v-model="state.email" />
+      </UFormGroup>
+  
+      <UFormGroup label="Password" name="password">
+        <UInput v-model="state.password" type="password" />
+      </UFormGroup>
+  
+      <UButton type="submit">
+        Submit
+      </UButton>
+    </UForm>
   </div>
 </template>
+
+
 

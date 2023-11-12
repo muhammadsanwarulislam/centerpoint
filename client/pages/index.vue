@@ -8,3 +8,4 @@ definePageMeta({
     <h1>Welcome to the Index page</h1>
   </div>
 </template>
+

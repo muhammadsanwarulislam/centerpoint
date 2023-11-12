@@ -1,59 +1,71 @@
-<script setup>
+<script setup lang="ts">
+import { reactive } from 'vue';
 import { useAuthStore } from "../stores/auth";
+import { z } from 'zod'
+import type { FormSubmitEvent } from '#ui/types'
+
 definePageMeta({
   middleware: "is-logged-in",
   layout: "frontend",
 });
-const userStore = useAuthStore();
-const name = ref(null);
-const email = ref(null);
-const password = ref(null);
-const password_confirmation = ref(null);
 
-const signUp = async () => {
+const userStore = useAuthStore();
+const schema = z.object({
+  email: z.string().email('Invalid email'),
+  password: z.string().min(8, 'Must be at least 8 characters'),
+  password_confirmation: z.string()
+  
+}).refine((data) => data.password === data.password_confirmation, {
+    message: "Passwords don't match",
+    path: ["password_confirmation"], // path of error
+  });
+
+type Schema = z.output<typeof schema>
+
+const state = reactive({
+  name: undefined,
+  email: undefined,
+  password: undefined,
+  password_confirmation: undefined,
+
+})
+
+async function onSubmit (event: FormSubmitEvent<Schema>) {
   await userStore.signUp({
-    name: name.value,
-    email: email.value,
-    password: password.value,
-    password_confirmation: password_confirmation.value,
+    name: state.name,
+    email: state.email,
+    password: state.password,
+    password_confirmation:state.password_confirmation,
   });
   return navigateTo("/login");
-};
+}
 </script>
 
 <template>
-  <div class="container mx-auto p-4">
-    <div class="mx-auto max-w-md">
-      <form @submit.prevent="signUp">
-        <div class="mb-4">
-          <label for="name" class="mb-2 block text-sm font-bold text-gray-700">Name</label>
-          <input type="text" id="name" v-model="name"
-            class="w-full rounded border p-2 focus:border-blue-400 focus:outline-none" required />
-        </div>
-        <div class="mb-4">
-          <label for="email" class="mb-2 block text-sm font-bold text-gray-700">Email</label>
-          <input type="email" id="email" v-model="email"
-            class="w-full rounded border p-2 focus:border-blue-400 focus:outline-none" required />
-        </div>
-        <div class="mb-4">
-          <label for="password" class="mb-2 block text-sm font-bold text-gray-700">Password</label>
-          <input type="password" id="password" v-model="password"
-            class="w-full rounded border p-2 focus:border-blue-400 focus:outline-none" required />
-        </div>
-        <div class="mb-4">
-          <label for="password_confirmation" class="mb-2 block text-sm font-bold text-gray-700">Password
-            Confirmation</label>
-          <input type="password" id="password_confirmation" v-model="password_confirmation"
-            class="w-full rounded border p-2 focus:border-blue-400 focus:outline-none" required />
-        </div>
-        <div class="text-center">
-          <button type="submit" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none">
-            signUp
-          </button>
-        </div>
-      </form>
-    </div>
+  <div class="shadow-md rounded-md w-96">
+    <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
+      <UFormGroup label="Name" name="name">
+        <UInput v-model="state.name" />
+      </UFormGroup>
+
+      <UFormGroup label="Email" name="email">
+        <UInput v-model="state.email" />
+      </UFormGroup>
+  
+      <UFormGroup label="Password" name="password">
+        <UInput v-model="state.password" type="password" />
+      </UFormGroup>
+      
+      <UFormGroup label="Password Confirmation" name="password_confirmation">
+        <UInput v-model="state.password_confirmation" type="password"/>
+      </UFormGroup>
+
+      <UButton type="submit">
+        Submit
+      </UButton>
+    </UForm>
   </div>
 </template>
+
 
 
