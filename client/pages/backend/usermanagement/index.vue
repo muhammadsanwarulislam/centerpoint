@@ -1,7 +1,18 @@
+<script setup>
+definePageMeta({
+  middleware: "is-logged-in",
+});
+import { useUserManagementStore } from "../../../stores/userManagement";
+const userManagementStore = useUserManagementStore();
+const userList = ref([]);
+console.log('sanwarul',userManagementStore.userList());
+
+
+</script>
+
 <template>
   <div
-    class="overflow-x-auto rounded-md border bg-background scrollbar-thin scrollbar-thumb-input scrollbar-thumb-rounded-md"
-  >
+    class="overflow-x-auto rounded-md border bg-background scrollbar-thin scrollbar-thumb-input scrollbar-thumb-rounded-md">
     <table class="w-full border-collapse">
       <thead>
         <tr class="border-b text-left text-xs">
@@ -12,11 +23,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="n in 6"
-          :key="n"
-          class="border-b text-left text-sm last:border-b-0 hover:bg-muted"
-        >
+        <tr v-for="n in 6" :key="n" class="border-b text-left text-sm last:border-b-0 hover:bg-muted">
           <td class="p-4">Nike Shoes</td>
           <td class="p-4">Paid</td>
           <td class="p-4">Shipped</td>
@@ -33,12 +40,3 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-definePageMeta({
-    middleware: "is-logged-in",
-  });
-  import { useUserManagementStore } from "../../../stores/userManagement";
-  const userManagementStore = useUserManagementStore();
-  const userList = ref([]);
-  console.log(userManagementStore.userList());
-</script>
