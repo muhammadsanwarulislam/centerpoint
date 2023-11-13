@@ -1,44 +1,34 @@
+<script setup>
+import { useUserManagementStore } from "../../../stores/userManagement";
+const userManagementStore = useUserManagementStore();
+const userList = ref([]);
+console.log('sanwarul',userManagementStore.userList());
+definePageMeta({
+  middleware: "is-logged-in",
+});
+const items = [{
+  label: 'List',
+  icon: 'i-heroicons-llist-bullet-20-solid',
+  content: 'This is the content shown for Tab1'
+}, {
+  label: 'Create',
+  icon: 'i-heroicons-pluser-plus',
+  content: 'And, this is the content for Tab2'
+}]
+</script>
+
 <template>
-  <div
-    class="overflow-x-auto rounded-md border bg-background scrollbar-thin scrollbar-thumb-input scrollbar-thumb-rounded-md"
-  >
-    <table class="w-full border-collapse">
-      <thead>
-        <tr class="border-b text-left text-xs">
-          <th class="p-4 font-medium uppercase text-muted-foreground">Product</th>
-          <th class="p-4 font-medium uppercase text-muted-foreground">Payment</th>
-          <th class="p-4 font-medium uppercase text-muted-foreground">Status</th>
-          <th class="p-4 font-medium uppercase text-muted-foreground"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="n in 6"
-          :key="n"
-          class="border-b text-left text-sm last:border-b-0 hover:bg-muted"
-        >
-          <td class="p-4">Nike Shoes</td>
-          <td class="p-4">Paid</td>
-          <td class="p-4">Shipped</td>
-          <td class="p-4">
-            <div class="flex items-center gap-3">
-              <button>
-                <Icon name="heroicons:pencil" class="h-4 w-4 text-muted-foreground" />
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <UTabs :items="items" class="w-full">
+    <template #default="{ item, index, selected }">
+      <div class="flex items-center gap-2 relative truncate">
+        <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
+
+        <span class="truncate">{{ index + 1 }}. {{ item.label }}</span>
+
+        <span v-if="selected" class="absolute -right-4 w-2 h-2 rounded-full bg-primary-500 dark:bg-primary-400" />
+      </div>
+    </template>
+  </UTabs>
 </template>
 
-<script lang="ts" setup>
-definePageMeta({
-    middleware: "is-logged-in",
-  });
-  import { useUserManagementStore } from "../../../stores/userManagement";
-  const userManagementStore = useUserManagementStore();
-  const userList = ref([]);
-  console.log(userManagementStore.userList());
-</script>
+

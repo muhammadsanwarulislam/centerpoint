@@ -17,7 +17,6 @@ export const useUserManagementStore = defineStore("userManagement", () => {
         method: "GET",
         headers: headers,
       });
-      console.log(res.data);
 
       // setUsers(res.data.users.map((users: { name: any }) => users));
     } catch (error) {

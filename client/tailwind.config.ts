@@ -1,45 +1,24 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./components/**/*.{js,vue,ts}",
-    "./layouts/**/*.vue",
-    "./pages/**/*.vue",
-    "./plugins/**/*.{js,ts}",
-    "./app.vue",
-    "./error.vue",
-  ],
+import type { Config } from 'tailwindcss'
+import defaultTheme from 'tailwindcss/defaultTheme'
+
+export default <Partial<Config>>{
   theme: {
-    colors: {
-      'blue': '#1fb6ff',
-      'purple': '#7e5bef',
-      'pink': '#ff49db',
-      'orange': '#ff7849',
-      'green': '#13ce66',
-      'yellow': '#ffc82c',
-      'gray-dark': '#273444',
-      'gray': '#8492a6',
-      'gray-light': '#d3dce6',
-    },
-    fontFamily: {
-      sans: ['Graphik', 'sans-serif'],
-      serif: ['Merriweather', 'serif'],
-    },
-    screens: {
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      '2xl': '1536px',
-    },
     extend: {
-      spacing: {
-        '8xl': '96rem',
-        '9xl': '128rem',
-      },
-      borderRadius: {
-        '4xl': '2rem',
+      colors: {
+        green: {
+          50: '#EFFDF5',
+          100: '#D9FBE8',
+          200: '#B3F5D1',
+          300: '#75EDAE',
+          400: '#00DC82',
+          500: '#00C16A',
+          600: '#00A155',
+          700: '#007F45',
+          800: '#016538',
+          900: '#0A5331',
+          950: '#052e16'
+        }
       }
-    },
-  },
-  plugins: [],
+    }
+  }
 }
