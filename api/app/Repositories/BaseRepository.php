@@ -1,6 +1,7 @@
 <?php
 namespace Repository;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -8,9 +9,63 @@ Abstract class BaseRepository {
 
     abstract function model();
 
-    public function getAll()
+    abstract function modelName();
+
+    public function getAll($offset, $limit, $searchData = null, $option = null)
     {
-        return $this->model()::orderBy('id', 'desc')->paginate(20);
+        $query = $this->model()::query();
+
+        $searchFields = [];
+
+        if ($this->model() == $this->modelName()) {
+            $query->where('id', '<>', Auth::id())->orderBy('created_at', 'desc');
+            $searchFields = ['username', 'email'];
+        } elseif ($this->model() == $this->modelName()) {
+            $query->orderBy('created_at', 'desc');
+            $searchFields = ['name'];
+        } 
+
+        switch ($option) {
+            case 'list':
+                $result = $query->offset(($offset - 1) * $limit)
+                    ->limit($limit)
+                    ->get();
+                $count = $query->paginate($limit)->total();
+                break;
+
+            case 'search':
+                if ($searchData) {
+                    $query->where(function ($query) use ($searchFields, $searchData) {
+                        foreach ($searchFields as $field) {
+                            $query->orWhere($field, 'like', '%' . $searchData . '%');
+                        }
+                    });
+
+                    $result = $query->offset(($offset - 1) * $limit)
+                        ->limit($limit)
+                        ->get();
+
+                    $count = $query->paginate($limit)->total();
+                } elseif (empty($searchData)) {
+                    $result = $query->offset(($offset - 1) * $limit)
+                        ->limit($limit)
+                        ->get();
+
+                    $count = $query->paginate($limit)->total();
+                }
+                break;
+
+            default:
+                $result = $query->get();
+                $count = $query->paginate($limit)->total();
+                break;
+        }
+
+        if ($result->isEmpty()) {
+            throw new \RuntimeException('No records found.');
+        }
+
+        return ['result' => $result, 'count' => $count];
     }
 
     public function findByID($id): Model

@@ -29,11 +29,22 @@ class RoleManagmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        Gate::authorize('view','roles');
-        $roles =$this->roleRepository->getAll();
-        return $this->json('List of role', RoleResource::collection($roles));
+        $offset         = $request['offset'];
+        $limit          = $request['limit'];
+        $option         = $request['option'];
+        $searchData     = $request['searchData'];
+
+        try {
+            Gate::authorize('view','roles');
+            $roles = $this->roleRepository->getAll($offset, $limit,$searchData, $option);
+            $totalCount = $roles['count'];
+
+            return $this->successJsonResponseWithLimitOffset('List of role', $option, $offset, $limit, $totalCount, RoleResource::collection($roles['result']));
+        } catch (\Exception $e) {
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 
 

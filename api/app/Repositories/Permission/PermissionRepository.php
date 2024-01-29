@@ -9,4 +9,9 @@ class PermissionRepository extends BaseRepository {
     {
         return Permission::class;
     }
+
+    function modelName() : String 
+    {
+        return "Permission::class";
+    }
 }

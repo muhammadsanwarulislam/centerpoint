@@ -23,11 +23,22 @@ class UserManagementController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        Gate::authorize('view','users');
-        $user = $this->userRepository->getAllUsersWithRole();
-        return $this->json('List of users', UserResource::collection($user));
+        $offset         = $request['offset'];
+        $limit          = $request['limit'];
+        $option         = $request['option'];
+        $searchData     = $request['searchData'];
+        
+        try {
+            Gate::authorize('view', 'users');
+            $users = $this->userRepository->getAll($offset, $limit, $searchData, $option);
+            $totalCount = $users['count'];
+            return $this->successJsonResponseWithLimitOffset('List of users', $option, $offset, $limit, $totalCount, UserResource::collection($users['result']));
+        } catch (\Exception $e) {
+
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
     
     /**
