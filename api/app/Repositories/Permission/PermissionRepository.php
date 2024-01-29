@@ -14,4 +14,9 @@ class PermissionRepository extends BaseRepository {
     {
         return "Permission::class";
     }
+
+    function getAllPermissionsForSeeder() 
+    {
+        return $this->model()::all();
+    }
 }

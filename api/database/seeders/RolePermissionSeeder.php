@@ -23,7 +23,7 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $permissions = $this->permissionRepository->getAll();
+        $permissions = $this->permissionRepository->getAllPermissionsForSeeder();
         $admin = $this->roleRepository->model()::where('name','=','Admin')->first();
         foreach($permissions as $permission) 
         {
