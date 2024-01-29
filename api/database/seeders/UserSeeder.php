@@ -24,21 +24,21 @@ class UserSeeder extends Seeder
     public function run()
     {
         $this->userRepository->model()::create([
-            'name'      => 'Muhammad', 
+            'username'      => 'Muhammad', 
             'email'     => 'super@gmail.com',
             'password'  => 'password',
             'role_id'   => $this->roleRepository->model()::inRandomOrder()->first()->id
         ]);
 
         $this->userRepository->model()::create([
-            'name'      => 'Admin',
+            'username'      => 'Admin',
             'email'     => 'admin@gmail.com',
             'password'  => 'password',
             'role_id'   => $this->roleRepository->model()::inRandomOrder()->first()->id
         ]);
         
         $this->userRepository->model()::create([
-            'name'      => 'User',
+            'username'      => 'User',
             'email'     => 'user@gmail.com',
             'password'  => 'password',
             'role_id'   => $this->roleRepository->model()::inRandomOrder()->first()->id
