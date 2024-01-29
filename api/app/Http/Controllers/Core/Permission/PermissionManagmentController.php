@@ -26,12 +26,22 @@ class PermissionManagmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        Gate::authorize('view','permissions');
-        $permissions =$this->permissionRepository->getAll();
-        // return $this->json('List of Permission', $permissions);
-        return $this->json('List of Permission', PermissionResource::collection($permissions));
+        $offset         = $request['offset'];
+        $limit          = $request['limit'];
+        $option         = $request['option'];
+        $searchData     = $request['searchData'];
+
+        try {
+            Gate::authorize('view','permissions');
+            $permissions = $this->permissionRepository->getAll($offset, $limit, $searchData, $option);
+            $totalCount = $permissions['count'];
+
+            return $this->successJsonResponseWithLimitOffset('List of Permission', $option, $offset, $limit, $totalCount, PermissionResource::collection($permissions['result']));
+        } catch (\Exception $e) {
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -42,13 +52,15 @@ class PermissionManagmentController extends Controller
      */
     public function store(PermissionCreateOrUpdateRequest $request)
     {
-        Gate::authorize('edit','permissions');
-        //permission create with validated the data in PermissionCreateOrUpdateRequest
-        $permission = $this->permissionRepository->create($request->validated());
-
-        return $this->json('Permission create successfully',[
-            'permission'          => $permission, 
-        ]);
+        try {
+            Gate::authorize('edit','permissions');
+            $permission = $this->permissionRepository->create($request->validated());
+            return $this->createdJsonResponse('Permission create successfully',[
+                'permission'          => $permission, 
+            ]);
+        } catch (\Exception $e) {
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -59,9 +71,13 @@ class PermissionManagmentController extends Controller
      */
     public function show($id)
     {
-        Gate::authorize('view','permissions');
-        $permission = $this->permissionRepository->findByID($id);
-        return $this->json("The user $id is",new PermissionResource($permission));
+        try {
+            Gate::authorize('view','permissions');
+            $permission = $this->permissionRepository->findByID($id);
+            return $this->successJsonResponse("The user $id is",new PermissionResource($permission));
+        } catch (\Exception $e) {
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -73,13 +89,15 @@ class PermissionManagmentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Gate::authorize('edit','permissions');
-        //permission update with validated the data in PermissionCreateOrUpdateRequest
-        $permission = $this->permissionRepository->updateByID($id, $request->all());
-
-        return $this->json('Permission update successfully',[
-            'permission'          => $permission, 
-        ]);
+        try {
+            Gate::authorize('edit','permissions');
+            $permission = $this->permissionRepository->updateByID($id, $request->all());
+            return $this->createdJsonResponse('Permission update successfully',[
+                'permission'          => $permission, 
+            ]);
+        } catch (\Exception $e) {
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -90,9 +108,12 @@ class PermissionManagmentController extends Controller
      */
     public function destroy($id)
     {
-        Gate::authorize('edit','permissions');
-        //permission delete
-        $this->permissionRepository->deletedByID($id);
-        return $this->json('Permission delete successfully');
+        try {
+            Gate::authorize('edit','permissions');
+            $this->permissionRepository->deletedByID($id);
+            return $this->successJsonResponse('Permission delete successfully');
+        } catch (\Exception $e) {
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 }
