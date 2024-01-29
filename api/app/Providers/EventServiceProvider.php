@@ -6,6 +6,8 @@ use App\Events\UserCreated;
 use Illuminate\Support\Facades\Event;
 use App\Listeners\UserCreatedListener;
 use Illuminate\Auth\Events\Registered;
+use App\Events\LoggedInUserAccessTokenStoreEvent;
+use App\Listeners\LoggedInUserAccessTokenStoreListener;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -23,6 +25,10 @@ class EventServiceProvider extends ServiceProvider
         
         UserCreated::class => [
             UserCreatedListener::class,
+        ],
+
+        LoggedInUserAccessTokenStoreEvent::class => [
+            LoggedInUserAccessTokenStoreListener::class
         ],
     ];
     

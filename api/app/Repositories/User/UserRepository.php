@@ -44,4 +44,15 @@ class UserRepository extends BaseRepository
         return '12345678';
     }
 
+    public function updateOrCreate(string $email, array $modelData)
+    {
+        $existingRecord = $this->model()::where('email', $email)->first();
+
+        if ($existingRecord) {
+            $existingRecord->update($modelData);
+        } else {
+            $this->model()::create(array_merge(['email' => $email], $modelData));
+        }
+    }
+
 }

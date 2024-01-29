@@ -1,7 +1,6 @@
 <script setup>
 useHead({ title: 'Login' });
 definePageMeta({ middleware: ['guest'], layout: 'guest' });
-const { appMode, loginTestDomain } = useRuntimeConfig().public;
 
 const { user } = useAuth();
 if (user.value) {
@@ -11,7 +10,6 @@ if (user.value) {
 const form = reactive({
 	email: 'super@gmail.com',
 	password: 'password',
-	domain: appMode === 'local' ? loginTestDomain : window?.location?.hostname,
 	remember: false
 });
 const unauthorizedError = ref('');
@@ -32,17 +30,6 @@ const {
 		console.log(error.data);
 		unauthorizedError.value = error.data.message;
 	}
-});
-// const email = ref('');
-// const password = ref('');
-
-// store domain name into state
-const getDomainName = ref(null);
-onMounted(() => {
-	getDomainName.value = window?.location?.hostname;
-});
-watch(getDomainName, (newValue, oldValue) => {
-	storeAppInfo().addDomain(newValue);
 });
 
 </script>

@@ -11,8 +11,9 @@ class RoleRepository extends BaseRepository {
         return Role::class;
     }
 
-    public function defaultRole()
+    public function defaultRoleID($roleName = null)
     {
-        $this->model()::where('name', 'Viewer')->first();
+        $role =  $this->model()::select('id')->where('name', $roleName)->firstOrFail();
+        return $role['id'];
     }
 }

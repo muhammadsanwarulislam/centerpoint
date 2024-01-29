@@ -24,7 +24,6 @@ export default defineNuxtConfig({
 			// clientURL: 'http://localhost:3000/',
 			apiURL: process.env.NUXT_PUBLIC_API_URL,
 			appMode: process.env.NUXT_PUBLIC_APP_MODE,
-			loginTestDomain: process.env.NUXT_PUBLIC_LOGIN_TEST_DOMAIN,
 		}
 	}
 });

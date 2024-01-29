@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -23,10 +25,12 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
-            return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
+        Gate::define('view', function(User $user, $model){
+            return $user->hasAccess("view_{$model}") || $user->hasAccess("edit_{$model}");
         });
 
-        //
+        Gate::define('edit', function(User $user, $model){
+            return $user->hasAccess("edit_{$model}");
+        });
     }
 }
