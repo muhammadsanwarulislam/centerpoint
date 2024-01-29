@@ -1,24 +1,38 @@
 {
-  "name": "nuxt-app",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
-  },
-  "devDependencies": {
-    "@nuxt/devtools": "latest",
-    "nuxt": "^3.8.1",
-    "vue": "^3.3.8",
-    "vue-router": "^4.2.5"
-  },
-  "dependencies": {
-    "@nuxt/ui": "^2.10.0",
-    "@pinia/nuxt": "^0.5.1",
-    "pinia": "^2.1.7",
-    "zod": "^3.22.4"
-  }
+	"name": "emasbd",
+	"description": "School Management System",
+	"author": "Md. Ashiqur Rahman",
+	"private": true,
+	"scripts": {
+		"build": "nuxt build",
+		"dev": "nuxt dev --port 3000 --host initial.emasbd.com -o",
+		"generate": "nuxt generate",
+		"start": "nuxt start",
+		"preview": "nuxt preview",
+		"postinstall": "nuxt prepare"
+	},
+	"devDependencies": {
+		"@nuxtjs/i18n": "^8.0.0",
+		"@nuxtjs/tailwindcss": "^6.10.4",
+		"@pinia-plugin-persistedstate/nuxt": "^1.2.0",
+		"@tailwindcss/forms": "^0.5.7",
+		"@types/node": "^18",
+		"nuxt": "^3.9.3",
+		"vue": "^3.4.14",
+		"vue-router": "^4.2.5"
+	},
+	"engines": {
+		"node": ">=20.10.0 || >=18.10.0",
+		"npm": ">=10.2.3 || >=9.1.0"
+	},
+	"dependencies": {
+		"@pinia/nuxt": "^0.5.1",
+		"flowbite": "^2.2.1",
+		"flowbite-vue": "^0.1.2",
+		"notivue": "^2.1.1",
+		"npm": "^10.4.0",
+		"nuxt-swiper": "^1.2.2",
+		"pinia": "^2.1.7",
+		"tailwindcss": "^3.4.1"
+	}
 }

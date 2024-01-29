@@ -1,0 +1,347 @@
+:root {
+  --border-color: #d2d2d2 !important;
+  --globalColor: #005180 !important;
+  --hoverColor: #176b9c !important;
+  --white: #ffffff !important;
+  --black: #000000 !important;
+  --btn-color: #097676 !important;
+  --btn-hover-color: #0d8a8a !important;
+  --headingColor: #401796 !important;
+  --green: #218838 !important;
+  --purple: #662d91 !important;
+  --gray: #848484 !important;
+  --darkBlue: #1f1053 !important;
+  --lightBlue: #005180 !important;
+}
+/*======================================
+//--//-->   Global Style's - Start
+======================================*/
+button:focus {
+  outline: none !important;
+}
+.button {
+  outline: none !important;
+  padding: 10px 16px !important;
+  border-radius: 8px !important;
+}
+.button:hover {
+  background-color: var(--hoverColor);
+  color: var(--white);
+  transition: all 0.3s ease-in-out;
+}
+.button:hover svg path {
+  transition: all 0.3s ease-in-out;
+  fill: var(--white) !important;
+}
+.table-btn {
+  /* padding: 5px;
+  margin-bottom: 4px;
+  border-radius: 8px !important; */
+  /* background-color: var(--btn-hover-color) !important; */
+  border: none !important;
+  transition: all 0.3s ease-in-out !important;
+}
+.table-btn:hover {
+  /* background-color: var(--globalColor) !important; */
+  color: var(--globalColor) !important;
+  transition: all 0.3s ease-in-out !important;
+}
+.table-btn svg path {
+  transition: all 0.3s ease-in-out;
+  /* fill: var(--white); */
+}
+
+.btn {
+  background-color: var(--btn-color) !important;
+  color: var(--white) !important;
+  border: none !important;
+  transition: all 0.3s ease-in-out !important;
+}
+.btn:hover {
+  background-color: var(--btn-hover-color) !important;
+}
+.fwb-modal .max-w-5xl.relative.p-4.h-full {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media screen and (max-width: 640px) {
+  .sm-w-100 {
+    width: 100%;
+  }
+  .sm-justify-end {
+    justify-content: flex-end;
+  }
+}
+@media screen and (min-width: 640px) {
+  .small-s-w {
+    width: 11rem !important;
+  }
+}
+
+/*======================================
+//--//-->   Global Style's - End
+======================================*/
+.top_menu {
+  position: fixed;
+  top: 0;
+  border-bottom: 1px solid var(--border-color);
+  z-index: 10;
+}
+.top_menu.dashboard {
+  margin-left: 16rem;
+  width: calc(100% - 16rem);
+}
+.top_menu.innerPage {
+  width: 100%;
+}
+@media screen and (max-width: 640px) {
+  .top_menu.dashboard {
+    margin-left: 0;
+    width: 100%;
+  }
+  .sidebar.closed {
+    left: 0 !important;
+  }
+  .desktop_view {
+    display: none;
+  }
+}
+#logo-sidebar {
+  border: 1px solid var(--border-color);
+}
+.sidebar.closed {
+  left: -255px;
+  transition: all 0.3s ease-in-out;
+}
+.dashboard_close {
+  transition: all 0.3s ease-in-out;
+}
+/*-------- Start mySwiper swiper --------*/
+.swiper-wrapper {
+  padding-bottom: 50px;
+  cursor: pointer;
+  user-select: none;
+}
+.mySwiper .card,
+.mySwiper .card-body,
+.mySwiper .card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+}
+.mySwiper .card {
+  margin-bottom: 20px;
+  border-radius: 10px;
+  width: auto;
+  padding: 30px 15px;
+  gap: 10px;
+  background-color: var(--white);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+.mySwiper .card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+.mySwiper .agent_card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  width: auto;
+  padding: 30px 15px;
+  gap: 10px;
+  background-color: var(--white);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+.mySwiper .agent_card .card-body {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: flex-start;
+}
+.mySwiper .agent_card .card-body .left-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.mySwiper .agent_card img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+.mySwiper .agent_card .label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #d9d9d9;
+  padding: 5px 10px;
+  border-radius: 7px;
+}
+.mySwiper .agent_card .label .icon {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.mySwiper .agent_card .label .icon.active {
+  background-color: #7cca80;
+}
+.mySwiper .agent_card .label .icon.inactive {
+  background-color: #f2c94c;
+}
+.mySwiper .agent_card .card-bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+/*-------- Start mySwiper swiper --------*/
+
+/*-------- Start Toggle Button --------*/
+
+.top_menu .toggle {
+  --width: 50px;
+  --height: 25px;
+  position: relative;
+  display: inline-block;
+  width: var(--width);
+  height: var(--height);
+  border-radius: var(--height);
+  cursor: pointer;
+}
+
+.top_menu .toggle input {
+  display: none;
+}
+
+.top_menu .toggle .slider {
+  position: absolute;
+  background-color: var(--globalColor);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--height);
+  /* border: 2px solid #969696; */
+  /* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); */
+  transition: all 0.4s ease-in-out;
+}
+
+.top_menu .toggle .slider::before {
+  content: '';
+  position: absolute;
+  top: 0.5px;
+  left: -2px;
+  width: calc(var(--height) * 1);
+  height: calc(var(--height) * 1);
+  border-radius: calc(var(--height) / 2);
+  border: 7px solid var(--white);
+  background-color: var(--globalColor);
+  box-shadow: 0px 1px 3px rgb(0 0 0 / 30%);
+  transition: all 0.4s ease-in-out;
+}
+
+.top_menu .toggle input:checked + .slider::before {
+  border-color: var(--white);
+  background-color: var(--globalColor);
+  transform: translateX(calc(var(--width) - var(--height)));
+  left: 1px;
+}
+
+.top_menu .toggle input:checked + .slider {
+  border-color: #2196f3;
+}
+
+.top_menu .toggle .labels {
+  position: absolute;
+  top: 3px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #4d4d4d;
+  font-size: 13px;
+  font-family: sans-serif;
+  transition: all 0.4s ease-in-out;
+}
+
+.top_menu .toggle .labels::after {
+  font-weight: bold;
+  content: attr(data-off);
+  position: absolute;
+  right: 5px;
+  opacity: 1;
+  color: var(--white);
+  /* text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); */
+  transition: all 0.4s ease-in-out;
+}
+
+.top_menu .toggle .labels::before {
+  font-weight: bold;
+  content: attr(data-on);
+  position: absolute;
+  left: 5px;
+  opacity: 0;
+  color: var(--white);
+  /* text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4); */
+  transition: all 0.4s ease-in-out;
+}
+
+.top_menu .toggle input:checked ~ .labels::after {
+  opacity: 0;
+}
+
+.top_menu .toggle input:checked ~ .labels::before {
+  opacity: 1;
+}
+
+/*-------- End Toggle Button --------*/
+
+/*-------- sidebar Start --------*/
+.sidebar ul > li > a {
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: all 0.3s ease-in-out;
+  user-select: none;
+}
+/*-------- sidebar End --------*/
+
+/*-------- three dots loader Start --------*/
+.loader-three-dots {
+  width: 15px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  animation: loader-three-dots 1s infinite linear alternate;
+}
+
+@keyframes loader-three-dots {
+  0% {
+    box-shadow: 20px 0 #000, -20px 0 #0002;
+    background: #000;
+  }
+
+  33% {
+    box-shadow: 20px 0 #000, -20px 0 #0002;
+    background: #0002;
+  }
+
+  66% {
+    box-shadow: 20px 0 #0002, -20px 0 #000;
+    background: #0002;
+  }
+
+  100% {
+    box-shadow: 20px 0 #0002, -20px 0 #000;
+    background: #000;
+  }
+}
+/*-------- three dots loader End --------*/

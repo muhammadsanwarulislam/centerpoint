@@ -1,71 +1,103 @@
-<script setup lang="ts">
-import { reactive } from 'vue';
-import { useAuthStore } from "../stores/auth";
-import { z } from 'zod'
-import type { FormSubmitEvent } from '#ui/types'
+<script setup>
+	useHead({ title: 'Register' });
+	definePageMeta({ middleware: ['guest'], layout: 'guest' });
 
-definePageMeta({
-  middleware: "is-logged-in",
-  layout: "frontend",
-});
+	const router = useRouter();
+	const { register } = useAuth();
 
-const userStore = useAuthStore();
-const schema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Must be at least 8 characters'),
-  password_confirmation: z.string()
-  
-}).refine((data) => data.password === data.password_confirmation, {
-    message: "Passwords don't match",
-    path: ["password_confirmation"], // path of error
-  });
+	const form = reactive({
+		name: '',
+		email: '',
+		password: '',
+		password_confirmation: ''
+	});
 
-type Schema = z.output<typeof schema>
-
-const state = reactive({
-  name: undefined,
-  email: undefined,
-  password: undefined,
-  password_confirmation: undefined,
-
-})
-
-async function onSubmit (event: FormSubmitEvent<Schema>) {
-  await userStore.signUp({
-    name: state.name,
-    email: state.email,
-    password: state.password,
-    password_confirmation:state.password_confirmation,
-  });
-  return navigateTo("/login");
-}
+	const {
+		submit,
+		isLoading,
+		validationErrors: errors
+	} = useSubmit(() => register(form), {
+		onSuccess: () => router.push('/dashboard'),
+		onError: (error) => console.log(error)
+	});
 </script>
 
 <template>
-  <div class="shadow-md rounded-md w-96">
-    <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-      <UFormGroup label="Name" name="name">
-        <UInput v-model="state.name" />
-      </UFormGroup>
+	<AuthCard>
+		<template #logo>
+			<NuxtLink to="/">
+				<ApplicationLogo class="w-20 h-20 fill-current text-gray-500" />
+			</NuxtLink>
+		</template>
+		<form @submit.prevent="submit">
+			<div>
+				<InputLabel for="name" value="Name" />
 
-      <UFormGroup label="Email" name="email">
-        <UInput v-model="state.email" />
-      </UFormGroup>
-  
-      <UFormGroup label="Password" name="password">
-        <UInput v-model="state.password" type="password" />
-      </UFormGroup>
-      
-      <UFormGroup label="Password Confirmation" name="password_confirmation">
-        <UInput v-model="state.password_confirmation" type="password"/>
-      </UFormGroup>
+				<TextInput
+					id="name"
+					type="text"
+					class="mt-1 block w-full"
+					v-model="form.name"
+					required
+					autofocus
+					autocomplete="name" />
 
-      <UButton type="submit">
-        Submit
-      </UButton>
-    </UForm>
-  </div>
+				<InputError class="mt-2" :message="errors?.name" />
+			</div>
+
+			<div class="mt-4">
+				<InputLabel for="email" value="Email" />
+
+				<TextInput
+					id="email"
+					type="email"
+					class="mt-1 block w-full"
+					v-model="form.email"
+					required
+					autocomplete="email" />
+
+				<InputError class="mt-2" :message="errors?.email" />
+			</div>
+
+			<div class="mt-4">
+				<InputLabel for="password" value="Password" />
+
+				<TextInput
+					id="password"
+					type="password"
+					class="mt-1 block w-full"
+					v-model="form.password"
+					required
+					autocomplete="new-password" />
+
+				<InputError class="mt-2" :message="errors?.password" />
+			</div>
+
+			<div class="mt-4">
+				<InputLabel for="password_confirmation" value="Confirm Password" />
+
+				<TextInput
+					id="password_confirmation"
+					type="password"
+					class="mt-1 block w-full"
+					v-model="form.password_confirmation"
+					required
+					autocomplete="new-password" />
+
+				<InputError class="mt-2" :message="errors?.password_confirmation" />
+			</div>
+
+			<div class="flex items-center justify-end mt-4">
+				<NuxtLink
+					to="/login"
+					class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+					Already registered?
+				</NuxtLink>
+
+				<PrimaryButton class="ml-4" :class="{ 'opacity-25': isLoading }" :disabled="isLoading">
+					Register
+				</PrimaryButton>
+			</div>
+		</form>
+	</AuthCard>
 </template>
-
-
-

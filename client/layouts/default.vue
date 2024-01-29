@@ -1,15 +1,21 @@
-<script setup lang="ts"></script>
+<script setup>
+import { initFlowbite } from 'flowbite';
+
+// initialize components based on data attribute selectors
+onMounted(() => {
+	initFlowbite();
+})
+
+</script>
+
 <template>
-  <div>
-    <!-- Header -->
-    <Header />
-    <div class="container lg:grid lg:grid-cols-12 lg:gap-10">
-      <!-- Sidebar -->
-      <Sidebar class="hidden lg:col-span-3 lg:block" />
-      <!-- Main Section -->
-      <main class="py-5 lg:col-span-6">
-        <slot />
-      </main>
-    </div>
-  </div>
+	<div class="min-h-screen bg-gray-50 white:bg-gray-900 mt-14">
+		<!-- Page Content -->
+		<main>
+			<Notivue v-slot="item">
+				<Notifications :item="item" />
+			</Notivue>
+			<slot />
+		</main>
+	</div>
 </template>

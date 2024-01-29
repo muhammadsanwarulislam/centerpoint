@@ -1,53 +1,95 @@
-<script setup lang="ts">
-import { reactive } from 'vue';
-import { useAuthStore } from "../stores/auth";
-import { z } from 'zod'
-import type { FormSubmitEvent } from '#ui/types'
+<script setup>
+useHead({ title: 'Login' });
+definePageMeta({ middleware: ['guest'], layout: 'guest' });
+const { appMode, loginTestDomain } = useRuntimeConfig().public;
 
-definePageMeta({
-  middleware: "is-logged-in",
-  layout: "frontend",
+const { user } = useAuth();
+if (user.value) {
+	window.location.href = '/dashboard';
+}
+
+const form = reactive({
+	email: 'super@gmail.com',
+	password: 'password',
+	domain: appMode === 'local' ? loginTestDomain : window?.location?.hostname,
+	remember: false
+});
+const unauthorizedError = ref('');
+
+const { login } = useAuth();
+const {
+	submit,
+	isLoading,
+	validationErrors: errors
+} = useSubmit(() => login(form), {
+	onSuccess: (response) => {
+		console.log('response', response.data);
+		// store user data into state
+		storeUserData().addUserData(response.data);
+		window.location.href = '/dashboard';
+	},
+	onError: (error) => {
+		console.log(error.data);
+		unauthorizedError.value = error.data.message;
+	}
+});
+// const email = ref('');
+// const password = ref('');
+
+// store domain name into state
+const getDomainName = ref(null);
+onMounted(() => {
+	getDomainName.value = window?.location?.hostname;
+});
+watch(getDomainName, (newValue, oldValue) => {
+	storeAppInfo().addDomain(newValue);
 });
 
-const userStore = useAuthStore();
-const schema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Must be at least 8 characters')
-})
-
-type Schema = z.output<typeof schema>
-
-const state = reactive({
-  email: undefined,
-  password: undefined
-})
-
-async function onSubmit (event: FormSubmitEvent<Schema>) {
-  await userStore.signIn({
-    email: state.email,
-    password: state.password,
-  });
-  return navigateTo("/");
-}
 </script>
 
 <template>
-  <div class="shadow-md rounded-md w-96">
-    <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-      <UFormGroup label="Email" name="email">
-        <UInput v-model="state.email" />
-      </UFormGroup>
-  
-      <UFormGroup label="Password" name="password">
-        <UInput v-model="state.password" type="password" />
-      </UFormGroup>
-  
-      <UButton type="submit">
-        Submit
-      </UButton>
-    </UForm>
-  </div>
+	<ClientOnly>
+		<AuthCard>
+			<template #logo>
+				<NuxtLink to="/">
+					<ApplicationLogo class="w-20 h-20 fill-current text-gray-500" />
+				</NuxtLink>
+			</template>
+			<form @submit.prevent="submit">
+				<div>
+					<InputLabel for="email" value="Email" />
+	
+					<TextInput id="email" type="text" class="mt-1 block w-full" v-model="form.email" required autofocus
+						autocomplete="email" />
+	
+					<InputError class="mt-2" :message="unauthorizedError" />
+				</div>
+	
+				<div class="mt-4">
+					<InputLabel for="password" value="Password" />
+	
+					<TextInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" required
+						autocomplete="current-password" />
+				</div>
+	
+				<div class="block mt-4">
+					<label class="flex items-center">
+						<Checkbox name="remember" v-model:checked="form.remember" />
+						<span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
+					</label>
+				</div>
+	
+				<div class="flex items-center justify-end mt-4">
+					<NuxtLink href="/forgot-password"
+						class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+						Forgot your password?
+					</NuxtLink>
+	
+					<PrimaryButton class="ml-4" :class="{ 'opacity-25': isLoading }" :disabled="isLoading">
+						Log in
+					</PrimaryButton>
+				</div>
+			</form>
+		</AuthCard>
+	</ClientOnly>
 </template>
-
-
-
