@@ -6,7 +6,7 @@
 	const { register } = useAuth();
 
 	const form = reactive({
-		name: '',
+		username: '',
 		email: '',
 		password: '',
 		password_confirmation: ''
@@ -31,18 +31,18 @@
 		</template>
 		<form @submit.prevent="submit">
 			<div>
-				<InputLabel for="name" value="Name" />
+				<InputLabel for="username" value="User Name" />
 
 				<TextInput
-					id="name"
+					id="username"
 					type="text"
 					class="mt-1 block w-full"
-					v-model="form.name"
+					v-model="form.username"
 					required
 					autofocus
-					autocomplete="name" />
+					autocomplete="username" />
 
-				<InputError class="mt-2" :message="errors?.name" />
+				<InputError class="mt-2" :message="errors?.username" />
 			</div>
 
 			<div class="mt-4">

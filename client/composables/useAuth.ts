@@ -26,7 +26,7 @@ export type ResetPasswordCredentials = {
 
 // api endpoint
 const LOGIN = '/login';
-const REGISTER = '/auth/register';
+const REGISTER = '/register';
 const LOGOUT = '/logout';
 const FORGOT_PASSWORD = '/forgot-password';
 const RESET_PASSWORD = '/auth/reset-password';

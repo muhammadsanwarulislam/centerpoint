@@ -13,11 +13,6 @@ class UserRepository extends BaseRepository
         return User::class;
     }
 
-    function modelName() : String 
-    {
-        return "User::class";
-    }
-
     public function getAllUsersWithRole()
     {
         return $this->model()::with('role')->paginate(10);

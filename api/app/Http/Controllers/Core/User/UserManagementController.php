@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Core\User;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 use Repository\User\UserRepository;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\User\UserResource;
 use App\Http\Controllers\JsonResponseTrait;
 use App\Http\Requests\User\UserCreateOrUpdateRequest;
@@ -46,10 +47,19 @@ class UserManagementController extends Controller
      */
     public function store(UserCreateOrUpdateRequest $request)
     {
-        Gate::authorize('edit','users');
-        //User create with validated the data in UserCreateOrUpdateRequest
-        $user = $this->userRepository->create($request->validated()+['password' => $this->userRepository->generateDefaultPassword()]);
-        return $this->json('User create successfully',new UserResource($user));
+        try {
+            DB::beginTransaction();
+            Gate::authorize('edit', 'users');
+            $user = $this->userRepository->create($request->validated() + ['password' => $this->userRepository->generateDefaultPassword()]);
+
+            DB::commit();
+
+            return $this->createdJsonResponse('User create successfully', new UserResource($user));
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 
     /**

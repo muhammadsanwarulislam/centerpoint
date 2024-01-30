@@ -24,19 +24,30 @@ class RegistrationPostRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'              => 'required|max:255',
-            'email'             => 'required|email|unique:users',
-            'password'          => 'required|string|min:8|max:255|confirmed'
+            'username'  => 'required|string|alpha_dash|unique:users',
+            'email'     => 'required|email|unique:users',
+            'password'  => 'required|string|min:8|max:255|confirmed',
         ];
     }
 
+    /**
+     * Get custom validation messages.
+     *
+     * @return array<string, string>
+     */
     public function messages()
     {
         return [
-            'name.required'           => 'The name field is required',
-            'email.required'          => 'The email field is required.',
-            'password.required'       => 'The password filed is required.',
-            'password.min'            => 'The password length must be at least 8 characters',
+            'username.required'     => 'The username field is required.',
+            'username.alpha_dash'   => 'The username may only contain letters, numbers, dashes, and underscores.',
+            'username.unique'       => 'The username is already taken.',
+            'email.required'        => 'The email field is required.',
+            'email.email'           => 'Please enter a valid email address.',
+            'email.unique'          => 'The email address is already in use.',
+            'password.required'     => 'The password field is required.',
+            'password.min'          => 'The password must be at least 8 characters.',
+            'password.max'          => 'The password may not be greater than 255 characters.',
+            'password.confirmed'    => 'The password confirmation does not match.',
         ];
     }
 }

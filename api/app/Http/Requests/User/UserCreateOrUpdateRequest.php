@@ -24,18 +24,25 @@ class UserCreateOrUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'              => 'required|max:255',
-            'email'             => 'required|email|unique:users',
-            'role_id'           => 'required'
+            'username'  => 'required|string|alpha_dash|unique:users',
+            'email'     => 'required|email|unique:users',
         ];
     }
 
+    /**
+     * Get custom validation messages.
+     *
+     * @return array<string, string>
+     */
     public function messages()
     {
         return [
-            'name.required'           => 'The name field is required',
-            'email.required'          => 'The email field is required.',
-            'role_id.required'        => 'The role field is required.'
+            'username.required'     => 'The username field is required.',
+            'username.alpha_dash'   => 'The username may only contain letters, numbers, dashes, and underscores.',
+            'username.unique'       => 'The username is already taken.',
+            'email.required'        => 'The email field is required.',
+            'email.email'           => 'Please enter a valid email address.',
+            'email.unique'          => 'The email address is already in use.',
         ];
     }
 }

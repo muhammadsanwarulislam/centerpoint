@@ -1,6 +1,8 @@
 <?php
 namespace Repository;
 
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
@@ -9,18 +11,15 @@ Abstract class BaseRepository {
 
     abstract function model();
 
-    abstract function modelName();
-
     public function getAll($offset, $limit, $searchData = null, $option = null)
     {
         $query = $this->model()::query();
-
         $searchFields = [];
 
-        if ($this->model() == $this->modelName()) {
+        if ($this->model() == User::class) {
             $query->where('id', '<>', Auth::id())->orderBy('created_at', 'desc');
             $searchFields = ['username', 'email'];
-        } elseif ($this->model() == $this->modelName()) {
+        } elseif ($this->model() == Role::class) {
             $query->orderBy('created_at', 'desc');
             $searchFields = ['name'];
         } 
@@ -44,13 +43,11 @@ Abstract class BaseRepository {
                     $result = $query->offset(($offset - 1) * $limit)
                         ->limit($limit)
                         ->get();
-
                     $count = $query->paginate($limit)->total();
                 } elseif (empty($searchData)) {
                     $result = $query->offset(($offset - 1) * $limit)
                         ->limit($limit)
                         ->get();
-
                     $count = $query->paginate($limit)->total();
                 }
                 break;
