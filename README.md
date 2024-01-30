@@ -2,7 +2,6 @@
 |           #             |   **Instructions**      |
 |-------------------------|-------------------------|
 | Step-1                  |   [Setup Nuxt project](#q1)<br>[Setup Laravel project](#q2)<br>|
-| Step-2                  | [Configure Thunder for api testing](#q10)<br>|
 
 
 ## Q1
@@ -10,8 +9,8 @@
 Follow the steps mentioned below to install and run the project.
 For both **frontend**
 1. Clone or download the repository
-2. Run the command `yarn`
-3. Run `yarn dev` from the project root and visit `http://localhost:3000/`
+2. Run the command `npm install`
+3. Run `npm run dev` from the project root and visit `http://localhost:3000/`
 
 
 ## Q2
