@@ -1,39 +1,39 @@
 <script setup>
 import { FwbButton, FwbModal, FwbPagination } from 'flowbite-vue'
 
-// Get role
-const role_list     = ref([])
-const current_page  = ref(1)
-const total_page    = ref(0)
-const limit         = ref(5)
-const is_loading    = ref(false)
-const search_data   = ref('')
+// Get Permissions
+const permission_list   = ref([])
+const current_page      = ref(1)
+const total_page        = ref(0)
+const limit             = ref(5)
+const is_loading        = ref(false)
+const search_data       = ref('')
 
-async function getRoleList() {
+async function getPermissionList() {
     try {
         is_loading.value = true
-        const response = await $http(`/roles?&option=search&offset=${current_page.value}&limit=${limit.value}&searchData=${search_data.value}`, {
+        const response = await $http(`/permissions?&option=search&offset=${current_page.value}&limit=${limit.value}&searchData=${search_data.value}`, {
             method: 'GET',
         })
-        role_list.value = response.data
+        permission_list.value = response.data
         total_page.value = Math.ceil(response.total / limit.value)
     } catch (error) {
-        role_list.value = []
+        permission_list.value = []
     } finally {
         is_loading.value = false
     }
 }
 
 onMounted(() => {
-    getRoleList()
+    getPermissionList()
 })
 
 watch([
     current_page,
     search_data
-], () => { getRoleList(); })
+], () => { getPermissionList(); })
 
-// create role Modal
+// Create Permission Modal
 const is_show_modal = ref(false)
 const is_validation = ref(false)
 const is_name_exist = ref('')
@@ -49,25 +49,25 @@ function showModal() {
     is_show_modal.value = true
 }
 
-// post create role
-const spinner = ref(false)
-const form = ref({
-    name: '',
-})
+// post create permission
+const spinner   = ref(false)
+const form      = ref({
+                    name: '',
+                })
 
-async function createRole() {
+async function createPermission() {
     try {
         if (form.value.name === '') {
             is_validation.value = true
             return
         }
         spinner.value = true
-        const response = await $http(`/roles`, {
+        const response = await $http(`/permissions`, {
             method: 'POST',
             body: form.value,
         })
         push.success(response.message)
-        role_list.value.unshift(response.data.role)
+        permission_list.value.unshift(response.data.permission)
         closeModal()
     } catch (error) {
         console.log(error)
@@ -83,6 +83,24 @@ async function createRole() {
         }
     } finally {
         spinner.value = false
+    }
+}
+
+async function deletePermission(id) {
+    try {
+        const response = await $http(`/permissions/${id}`, {
+            method: 'DELETE',
+            body: form.value,
+        })
+        // Remove the deleted permission from the list
+        const index = permission_list.value.findIndex(item => item.id === id);
+        if (index !== -1) {
+            permission_list.value.splice(index, 1);
+        }
+
+        push.success(response.message)
+    } catch (error) {
+        console.log(error);
     }
 }
 </script>
@@ -101,15 +119,15 @@ async function createRole() {
                                 d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                         </svg>
                     </div>
-                    <input v-model="search_data" v-on:keyup.enter="getRoleList"
-                        class="bg-white block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    <input v-model="search_data" v-on:keyup.enter="getPermissionList"
+                        class="block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Type Role Name">
                 </div>
             </div>
 
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <button class="button btn" @click="showModal">
-                    + Add Role
+                    + Add Permission
                 </button>
             </div>
         </div>
@@ -122,7 +140,7 @@ async function createRole() {
                             #
                         </th>
                         <th scope="col" class="px-4 py-4 text-left">
-                            Role
+                            Permission
                         </th>
                         <th scope="col" class="px-4 py-4 text-center">
                             Action
@@ -138,7 +156,7 @@ async function createRole() {
                             </div>
                         </td>
                     </tr>
-                    <tr v-else-if="!is_loading && role_list.length === 0"
+                    <tr v-else-if="!is_loading && permission_list.length === 0"
                         class="bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 h-80">
                         <td colspan="3">
                             <div class="flex justify-center">
@@ -146,8 +164,8 @@ async function createRole() {
                             </div>
                         </td>
                     </tr>
-                    <tr v-else v-for="(item, index) in role_list" :key="index"
-                        class="even:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                    <tr v-else v-for="(item, index) in permission_list" :key="index"
+                        class="odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                         <td class="px-2 py-4 text-center">
                             {{ limit * (current_page - 1) + index + 1 }}
                         </td>
@@ -174,12 +192,22 @@ async function createRole() {
                                     </defs>
                                 </svg>
                             </button>
-                            <button class="mr-2 table-btn">
-                                <svg width="17" height="21" viewBox="0 0 17 21" fill="none"
+                            <button class="mr-2 table-btn" @click="deletePermission(item.id)">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M12.75 12.1242C12.75 12.345 12.6604 12.5567 12.501 12.7129C12.3416 12.869 12.1254 12.9567 11.9 12.9567H5.09999C4.87456 12.9567 4.65836 12.869 4.49895 12.7129C4.33955 12.5567 4.24999 12.345 4.24999 12.1242C4.24999 11.9034 4.33955 11.6917 4.49895 11.5356C4.65836 11.3794 4.87456 11.2917 5.09999 11.2917H11.9C12.1254 11.2917 12.3416 11.3794 12.501 11.5356C12.6604 11.6917 12.75 11.9034 12.75 12.1242ZM9.34999 14.6217H5.09999C4.87456 14.6217 4.65836 14.7094 4.49895 14.8655C4.33955 15.0216 4.24999 15.2334 4.24999 15.4542C4.24999 15.6749 4.33955 15.8867 4.49895 16.0428C4.65836 16.1989 4.87456 16.2866 5.09999 16.2866H9.34999C9.57542 16.2866 9.79162 16.1989 9.95103 16.0428C10.1104 15.8867 10.2 15.6749 10.2 15.4542C10.2 15.2334 10.1104 15.0216 9.95103 14.8655C9.79162 14.7094 9.57542 14.6217 9.34999 14.6217ZM17 9.19803V16.2866C16.9986 17.3902 16.5504 18.4481 15.7537 19.2285C14.957 20.0088 13.8767 20.4477 12.75 20.4491H4.24999C3.12324 20.4477 2.04302 20.0088 1.24629 19.2285C0.449549 18.4481 0.00134968 17.3902 0 16.2866V4.63186C0.00134968 3.52832 0.449549 2.47036 1.24629 1.69005C2.04302 0.909726 3.12324 0.470762 4.24999 0.469441H8.08774C8.86941 0.46747 9.64373 0.61728 10.3659 0.910207C11.0881 1.20313 11.7439 1.63337 12.2952 2.17603L15.2566 5.07807C15.811 5.61772 16.2506 6.25975 16.5498 6.96696C16.8491 7.67417 17.0021 8.4325 17 9.19803ZM11.0933 3.35316C10.8258 3.09939 10.5255 2.88108 10.2 2.70383V6.29683C10.2 6.51762 10.2895 6.72936 10.4489 6.88548C10.6084 7.0416 10.8246 7.12931 11.05 7.12931H14.7186C14.5375 6.81063 14.3143 6.51673 14.0547 6.2552L11.0933 3.35316ZM15.3 9.19803C15.3 9.06067 15.2728 8.92914 15.26 8.79428H11.05C10.3737 8.79428 9.72508 8.53116 9.24687 8.06279C8.76865 7.59443 8.49999 6.95919 8.49999 6.29683V2.17354C8.36229 2.16105 8.22714 2.13441 8.08774 2.13441H4.24999C3.57369 2.13441 2.92509 2.39753 2.44687 2.8659C1.96866 3.33426 1.7 3.96949 1.7 4.63186V16.2866C1.7 16.949 1.96866 17.5842 2.44687 18.0526C2.92509 18.521 3.57369 18.7841 4.24999 18.7841H12.75C13.4263 18.7841 14.0749 18.521 14.5531 18.0526C15.0313 17.5842 15.3 16.949 15.3 16.2866V9.19803Z"
-                                        fill="#374957" />
+                                    <g clip-path="url(#clip0_41_2783)">
+                                        <path
+                                            d="M12.4994 3.20713C12.502 3.37285 12.5531 3.53419 12.6462 3.67129C12.7393 3.8084 12.8705 3.91528 13.0236 3.97879C14.3921 4.58095 15.5494 5.57838 16.3469 6.84305C17.1445 8.10771 17.5458 9.58188 17.4994 11.0763C17.4671 13.0654 16.646 14.9603 15.2167 16.344C13.7873 17.7277 11.8669 18.4869 9.87775 18.4546C7.88862 18.4224 5.99379 17.6012 4.61008 16.1719C3.22638 14.7426 2.46715 12.8221 2.49941 10.833C2.50134 9.37982 2.92537 7.95852 3.71996 6.74186C4.51454 5.5252 5.64547 4.56557 6.97525 3.97963C7.12841 3.91573 7.25959 3.80853 7.35269 3.67116C7.44581 3.53379 7.4968 3.37223 7.49941 3.20629C7.49963 3.0698 7.46631 2.93535 7.4024 2.81475C7.33848 2.69414 7.24592 2.59109 7.13284 2.51464C7.01977 2.43819 6.88965 2.39068 6.75392 2.37629C6.61819 2.36191 6.481 2.38108 6.35441 2.43213C4.42048 3.27058 2.8346 4.74991 1.86388 6.62095C0.893169 8.492 0.596938 10.6404 1.02509 12.7043C1.45324 14.7683 2.57961 16.6216 4.21447 17.9521C5.84934 19.2826 7.8928 20.0091 10.0007 20.0091C12.1085 20.0091 14.152 19.2826 15.7869 17.9521C17.4217 16.6216 18.5481 14.7683 18.9762 12.7043C19.4044 10.6404 19.1082 8.492 18.1374 6.62095C17.1667 4.74991 15.5808 3.27058 13.6469 2.43213C13.5201 2.38052 13.3826 2.36094 13.2465 2.37512C13.1103 2.38929 12.9798 2.43678 12.8663 2.51338C12.7529 2.58999 12.6601 2.69336 12.5961 2.81436C12.5321 2.93535 12.4989 3.07025 12.4994 3.20713Z"
+                                            fill="#374957" />
+                                        <path
+                                            d="M10.8337 0.833303C10.8337 0.373066 10.4606 -3.05176e-05 10.0003 -3.05176e-05C9.54009 -3.05176e-05 9.16699 0.373066 9.16699 0.833303V5.8333C9.16699 6.29354 9.54009 6.66664 10.0003 6.66664C10.4606 6.66664 10.8337 6.29354 10.8337 5.8333V0.833303Z"
+                                            fill="#374957" />
+                                    </g>
+                                    <defs>
+                                        <clipPath id="clip0_41_2783">
+                                            <rect width="20" height="20" fill="white" />
+                                        </clipPath>
+                                    </defs>
                                 </svg>
 
                             </button>
@@ -189,7 +217,7 @@ async function createRole() {
             </table>
         </div>
         <!-- Pagination -->
-        <div v-if="!is_loading && role_list.length > 0" class="flex justify-center">
+        <div v-if="!is_loading && permission_list.length > 0" class="flex justify-center">
             <fwb-pagination v-model="current_page" :total-pages="total_page"></fwb-pagination>
         </div>
         <!-- Main modal -->
@@ -197,20 +225,20 @@ async function createRole() {
             <fwb-modal v-if="is_show_modal" @close="closeModal" persistent size="5xl">
                 <template #header>
                     <div class="flex items-center text-lg text-xl font-medium text-gray-900 dark:text-white">
-                        Add Role
+                        Add Permission
                     </div>
                 </template>
                 <template #body>
                     <div class="flex flex-wrap pr-6 pl-3">
                         <div class="flex items-start pt-4 w-full">
-                            <p class="w-56 pl-3 pr-3">Role Name</p>
+                            <p class="w-56 pl-3 pr-3">Permission Name</p>
                             <div class="flex flex-col items-start w-full">
                                 <input type="text" v-model="form.name"
                                     :class="{ 'border-red-500': is_validation && form.name === '' }"
-                                    class="bg-white block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="Enter name">
                                 <span v-if="is_validation && form.name === ''" class="text-red-500">
-                                    Please enter Role name
+                                    Please enter permission name
                                 </span>
                                 <span v-if="is_name_exist" class="text-red-500">
                                     {{ is_name_exist }}
@@ -236,7 +264,7 @@ async function createRole() {
                             </svg>
                             Loading...
                         </fwb-button>
-                        <fwb-button v-else @click="createRole" color="green">
+                        <fwb-button v-else @click="createPermission" color="green">
                             Submit
                         </fwb-button>
                     </div>

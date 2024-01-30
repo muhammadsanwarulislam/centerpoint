@@ -67,9 +67,13 @@ class UserManagementController extends Controller
      */
     public function show(string $id)
     {
-        Gate::authorize('view','users');
-        $user = $this->userRepository->findByIDWithRole($id);
-        return $this->json("The user $id is",new UserResource($user));
+        try {
+            Gate::authorize('view', 'users');
+            $user = $this->userRepository->findByIDWithRole($id);
+            return $this->successJsonResponse("The user id is: $id", new UserResource($user));
+        } catch (\Exception $e) {
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -77,10 +81,13 @@ class UserManagementController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        Gate::authorize('edit','users');
-        //User update with validated the data in UserCreateOrUpdateRequest
-        $user = $this->userRepository->updateByID($id, $request->all());
-        return $this->json('User update successfully');
+        try {
+            Gate::authorize('edit', 'users');
+            $user = $this->userRepository->updateByID($id, $request->all());
+            return $this->successJsonResponse('User update successfully', $user);
+        } catch (\Exception $e) {
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -88,8 +95,12 @@ class UserManagementController extends Controller
      */
     public function destroy(string $id)
     {
-        Gate::authorize('edit','users');
-        $this->userRepository->deletedByID($id);
-        return $this->json('User delete successfully');
+        try {
+            Gate::authorize('edit', 'users');
+            $this->userRepository->deletedByID($id);
+            return $this->successJsonResponse('User delete successfully');
+        } catch (\Exception $e) {
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 }

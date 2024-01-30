@@ -1,6 +1,7 @@
 <?php
 namespace Repository;
 
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,11 @@ Abstract class BaseRepository {
         } elseif ($this->model() == Role::class) {
             $query->orderBy('created_at', 'desc');
             $searchFields = ['name'];
+        }elseif ($this->model() == Permission::class) {
+            $query->orderBy('created_at', 'desc');
+            $searchFields = ['name'];
         } 
+
 
         switch ($option) {
             case 'list':

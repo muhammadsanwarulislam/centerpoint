@@ -113,6 +113,24 @@ async function createUser() {
     }
 }
 
+async function deleteUser(id) {
+    try {
+        const response = await $http(`/users/${id}`, {
+            method: 'DELETE',
+            body: form.value,
+        })
+        // Remove the deleted user from the list
+        const index = user_list.value.findIndex(item => item.id === id);
+        if (index !== -1) {
+            user_list.value.splice(index, 1);
+        }
+
+        push.success(response.message)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 function reset() {
     is_validation.value = false
     is_username_exist.value = ''
@@ -250,7 +268,7 @@ function reset() {
                         </td>
                     </tr>
                     <tr v-else v-for="(item, index) in user_list" :key="index"
-                        class="even:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                        class="odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                         <td class="px-2 py-4 text-center">
                             {{ limit * (current_page - 1) + index + 1 }}
                         </td>
@@ -291,7 +309,7 @@ function reset() {
                                 </svg>
 
                             </button>
-                            <button class="mr-2 table-btn">
+                            <button class="mr-2 table-btn" @click="deleteUser(item.id)">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g clip-path="url(#clip0_41_2783)">

@@ -26,6 +26,7 @@ class UserCreateOrUpdateRequest extends FormRequest
         return [
             'username'  => 'required|string|alpha_dash|unique:users',
             'email'     => 'required|email|unique:users',
+            'role_id'   => 'required',
         ];
     }
 
@@ -43,6 +44,7 @@ class UserCreateOrUpdateRequest extends FormRequest
             'email.required'        => 'The email field is required.',
             'email.email'           => 'Please enter a valid email address.',
             'email.unique'          => 'The email address is already in use.',
+            'role_id.required'      => 'The role field is required.',
         ];
     }
 }
