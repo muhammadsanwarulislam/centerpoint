@@ -59,8 +59,9 @@ class RoleManagmentController extends Controller
         try {
             Gate::authorize('edit','roles');
             $role = $this->roleRepository->create($request->validated());
+            // dd(gettype($request->input('permissions')));
             if($permissions = $request->input('permissions')) {
-                foreach(explode(',',$permissions) as $permission_id) {
+                foreach($permissions as $permission_id) {
                     DB::table('role_permission')->insert([
                         'role_id' => $role['id'],
                         'permission_id' => $permission_id
