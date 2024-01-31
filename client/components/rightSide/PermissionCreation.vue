@@ -8,6 +8,7 @@ const total_page        = ref(0)
 const limit             = ref(5)
 const is_loading        = ref(false)
 const search_data       = ref('')
+const permission_id     = ref(null);
 
 async function getPermissionList() {
     try {
@@ -24,14 +25,29 @@ async function getPermissionList() {
     }
 }
 
+async function getPermissionByID(id) {
+    try {
+        const response = await $http(`/permissions/${id}`, {
+            method: "GET",
+        });
+        let data = response.data;
+        form.value = {
+            name: data.name,
+        };
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 onMounted(() => {
     getPermissionList()
 })
 
-watch([
-    current_page,
-    search_data
-], () => { getPermissionList(); })
+watch([current_page, search_data], () => { 
+    getPermissionList(); 
+})
+
+const isEditing = computed(() => !!permission_id.value);
 
 // Create Permission Modal
 const is_show_modal = ref(false)
@@ -44,16 +60,18 @@ function closeModal() {
     form.value = {
         name: ''
     }
+    permission_id.value = null;
 }
-function showModal() {
-    is_show_modal.value = true
+function showModal(id) {
+    is_show_modal.value = true;
+    if(id) {
+        getPermissionByID(id);
+    }
 }
 
 // post create permission
 const spinner   = ref(false)
-const form      = ref({
-                    name: '',
-                })
+const form      = ref({ name: ''})
 
 async function createPermission() {
     try {
@@ -86,6 +104,33 @@ async function createPermission() {
     }
 }
 
+async function updatePermissionByID(id) {
+    try {
+        if (form.value.name === "") {
+            is_validation.value = true;
+            return;
+        }
+        spinner.value = true;
+        const response = await $http(`/permissions/${id}`, {
+            method: "PUT",
+            body: form.value,
+        });
+        
+        const index = permission_list.value.findIndex((item) => item.id === id);
+        
+        if (index !== -1) {
+            permission_list.value[index] = response.data.role;
+        }
+
+        push.success(response.message);
+        closeModal();
+    } catch (error) {
+        handleApiError(error);
+    } finally {
+        spinner.value = false;
+    }
+}
+
 async function deletePermission(id) {
     try {
         const response = await $http(`/permissions/${id}`, {
@@ -101,6 +146,18 @@ async function deletePermission(id) {
         push.success(response.message)
     } catch (error) {
         console.log(error);
+    }
+}
+
+async function handleApiError(error) {
+    const errors = error.data?.errors;
+    const defaultMessage = error.data?.message;
+    if (errors) {
+        if (errors.name) {
+            is_name_exist.value = errors.name[0];
+        }
+    } else {
+        push.error(defaultMessage || "An unknown error occurred");
     }
 }
 </script>
@@ -174,7 +231,7 @@ async function deletePermission(id) {
                             {{ item.name }}
                         </th>
                         <td class="px-4 py-4 text-center text-gray-900">
-                            <button class="mr-2 table-btn">
+                            <button class="mr-2 table-btn" @click="showModal(item.id)">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g clip-path="url(#clip0_41_2780)">
@@ -264,9 +321,10 @@ async function deletePermission(id) {
                             </svg>
                             Loading...
                         </fwb-button>
-                        <fwb-button v-else @click="createPermission" color="green">
-                            Submit
+                        <fwb-button v-else @click="isEditing ? updatePermissionByID(permission_id) : createPermission()" color="green">
+                            {{ isEditing ? "Update" : "Submit"}}
                         </fwb-button>
+
                     </div>
                 </template>
             </fwb-modal>
