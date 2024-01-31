@@ -1,13 +1,25 @@
 <script setup>
+import { ref, onMounted, watch } from "vue";
 import { FwbButton, FwbModal, FwbPagination } from "flowbite-vue";
 
-// Get role
 const role_list = ref([]);
 const current_page = ref(1);
 const total_page = ref(0);
 const limit = ref(5);
 const is_loading = ref(false);
 const search_data = ref("");
+
+const permission_list = ref([]);
+const is_show_modal = ref(false);
+const is_validation = ref(false);
+const is_name_exist = ref("");
+const role_id = ref(null);
+
+const spinner = ref(false);
+const form = ref({
+    name: "",
+    permissions: [],
+});
 
 async function getRoleList() {
     try {
@@ -18,6 +30,7 @@ async function getRoleList() {
                 method: "GET",
             }
         );
+
         role_list.value = response.data;
         total_page.value = Math.ceil(response.total / limit.value);
     } catch (error) {
@@ -27,28 +40,21 @@ async function getRoleList() {
     }
 }
 
-async function getRoleListByID(id) {
+async function getRoleByID(id) {
     try {
-        const response = await $http(
-            `/roles/${id}`,
-            {
-                method: "GET",
-            }
-        );
-        let data = response.data
+        const response = await $http(`/roles/${id}`, {
+            method: "GET",
+        });
+        let data = response.data;
         form.value = {
             name: data.name,
-            permissions: data.permissions.map(item => {return item.id})
-        }
-        console.log(data);
-        console.log('form.value',form.value);
+            permissions: data.permissions.map((item) => item.id),
+        };
+        role_id.value = id;
     } catch (error) {
         console.log(error);
-    } 
+    }
 }
-
-// Get permissions
-const permission_list = ref([]);
 
 async function getPermissionList() {
     try {
@@ -67,7 +73,7 @@ async function deleteRole(id) {
             method: "DELETE",
             body: form.value,
         });
-        // Remove the deleted role from the list
+
         const index = role_list.value.findIndex((item) => item.id === id);
         if (index !== -1) {
             role_list.value.splice(index, 1);
@@ -88,33 +94,24 @@ watch([current_page, search_data], () => {
     getRoleList();
 });
 
-// create role Modal
-const is_show_modal = ref(false);
-const is_validation = ref(false);
-const is_name_exist = ref("");
+const isEditing = computed(() => !!role_id.value);
 
 function closeModal() {
     is_show_modal.value = false;
     is_validation.value = false;
     form.value = {
         name: "",
-        permissions:[]
+        permissions: [],
     };
-}
-function showModal(id) {
-    is_show_modal.value = true;
-    if(id){
-        getRoleListByID(id)
-        
-    }
+    role_id.value = null;
 }
 
-// post create role
-const spinner = ref(false);
-const form = ref({
-    name: "",
-    permissions:[],
-});
+function showModal(id) {
+    is_show_modal.value = true;
+    if (id) {
+        getRoleByID(id);
+    }
+}
 
 async function createRole() {
     try {
@@ -131,22 +128,54 @@ async function createRole() {
         role_list.value.unshift(response.data.role);
         closeModal();
     } catch (error) {
-        console.log(error);
-
-        const errors = error.data?.errors;
-        const defaultMessage = error.data?.message;
-        if (errors) {
-            if (errors.name) {
-                is_name_exist.value = errors.name[0];
-            }
-        } else {
-            push.error(defaultMessage || "An unknown error occurred");
-        }
+        handleApiError(error);
     } finally {
         spinner.value = false;
     }
 }
+
+async function updateRoleByID(id) {
+    try {
+        if (form.value.name === "") {
+            is_validation.value = true;
+            return;
+        }
+        spinner.value = true;
+        const response = await $http(`/roles/${id}`, {
+            method: "PUT",
+            body: form.value,
+        });
+        
+        const index = role_list.value.findIndex((item) => item.id === id);
+        
+        if (index !== -1) {
+            role_list.value[index] = response.data.role;
+        }
+
+        push.success(response.message);
+        closeModal();
+    } catch (error) {
+        handleApiError(error);
+    } finally {
+        spinner.value = false;
+    }
+}
+
+function handleApiError(error) {
+    console.log(error);
+
+    const errors = error.data?.errors;
+    const defaultMessage = error.data?.message;
+    if (errors) {
+        if (errors.name) {
+            is_name_exist.value = errors.name[0];
+        }
+    } else {
+        push.error(defaultMessage || "An unknown error occurred");
+    }
+}
 </script>
+
 <template>
     <div>
         <h1 class="text-2xl font-bold pb-3">Role Creation</h1>
@@ -283,12 +312,16 @@ async function createRole() {
                             <p class="w-56 pl-3 pr-3">Select Permissions</p>
                             <ul
                                 class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                <li v-for="(item, index) in permission_list" :key="index" :value="item.id" class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                                <li v-for="(item, index) in permission_list" :key="index" :value="item.id"
+                                    class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
                                     <div class="flex items-center ps-3">
-                                        <input :id="'vue-checkbox-list'+item.id" type="checkbox" v-model="form.permissions" :value="item.id" :checked="item.id == form.permissions.id"
+                                        <input :id="'vue-checkbox-list' + item.id" type="checkbox"
+                                            v-model="form.permissions" :value="item.id"
+                                            :checked="item.id == form.permissions.id"
                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                                        <label :for="'vue-checkbox-list'+item.id"
-                                            class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ item.name }}
+                                        <label :for="'vue-checkbox-list' + item.id"
+                                            class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{
+                                                item.name }}
                                         </label>
                                     </div>
                                 </li>
@@ -313,8 +346,8 @@ async function createRole() {
                             </svg>
                             Loading...
                         </fwb-button>
-                        <fwb-button v-else @click="createRole" color="green">
-                            Submit
+                        <fwb-button v-else @click="isEditing ? updateRoleByID(role_id) : createRole()" color="green">
+                            {{ isEditing ? "Update" : "Submit"}}
                         </fwb-button>
                     </div>
                 </template>

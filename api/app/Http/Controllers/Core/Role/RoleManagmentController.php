@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Core\Role;
 
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Repository\Role\RoleRepository;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\Role\RoleResource;
 use App\Http\Controllers\JsonResponseTrait;
 use Repository\Permission\PermissionRepository;
 use App\Http\Requests\Role\RoleCreateOrUpdateRequest;
-use Illuminate\Http\Request;
 
 class RoleManagmentController extends Controller
 {
@@ -37,8 +37,8 @@ class RoleManagmentController extends Controller
         $searchData     = $request['searchData'];
 
         try {
-            Gate::authorize('view','roles');
-            $roles = $this->roleRepository->getAll($offset, $limit,$searchData, $option);
+            Gate::authorize('view', 'roles');
+            $roles = $this->roleRepository->getAll($offset, $limit, $searchData, $option);
             $totalCount = $roles['count'];
 
             return $this->successJsonResponseWithLimitOffset('List of role', $option, $offset, $limit, $totalCount, RoleResource::collection($roles['result']));
@@ -57,19 +57,18 @@ class RoleManagmentController extends Controller
     public function store(RoleCreateOrUpdateRequest $request)
     {
         try {
-            Gate::authorize('edit','roles');
+            Gate::authorize('edit', 'roles');
             $role = $this->roleRepository->create($request->validated());
-            // dd(gettype($request->input('permissions')));
-            if($permissions = $request->input('permissions')) {
-                foreach($permissions as $permission_id) {
+            if ($permissions = $request->input('permissions')) {
+                foreach ($permissions as $permission_id) {
                     DB::table('role_permission')->insert([
                         'role_id' => $role['id'],
                         'permission_id' => $permission_id
                     ]);
                 }
             }
-            return $this->createdJsonResponse('Role create successfully',[
-                'role'          => new RoleResource($role), 
+            return $this->createdJsonResponse('Role create successfully', [
+                'role'          => new RoleResource($role),
             ]);
         } catch (\Exception $e) {
             return $this->errorJsonResponse('Error: ' . $e->getMessage());
@@ -85,9 +84,9 @@ class RoleManagmentController extends Controller
     public function show($id)
     {
         try {
-            Gate::authorize('edit','roles');
+            Gate::authorize('edit', 'roles');
             $role = $this->roleRepository->findByID($id);
-            return $this->successJsonResponse("The role $id is",new RoleResource($role));
+            return $this->successJsonResponse("The role $id is", new RoleResource($role));
         } catch (\Exception $e) {
             return $this->errorJsonResponse('Error: ' . $e->getMessage());
         }
@@ -102,23 +101,35 @@ class RoleManagmentController extends Controller
      */
     public function update(Request $request, $id)
     {
+        DB::beginTransaction();
+
         try {
-            Gate::authorize('edit','roles');
-            $this->roleRepository->updateByID($id, $request->all());
-            DB:: table('role_permission')->where('role_id', $id)->delete();
-            if($permissions = $request->input('permissions')) {
-                foreach($permissions as $permission_id) {
+            Gate::authorize('edit', 'roles');
+            $role = $this->roleRepository->updateByID($id, $request->all());
+
+            DB::table('role_permission')->where('role_id', $id)->delete();
+
+            if ($permissions = $request->input('permissions')) {
+                foreach ($permissions as $permission_id) {
                     DB::table('role_permission')->insert([
                         'role_id' => $id,
                         'permission_id' => $permission_id
                     ]);
                 }
             }
-            return $this->createdJsonResponse('Role update successfully');
+
+            DB::commit();
+
+            return $this->createdJsonResponse('Role update successfully', [
+                'role' => new RoleResource($role),
+            ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->errorJsonResponse('Error: ' . $e->getMessage());
         }
     }
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -129,8 +140,8 @@ class RoleManagmentController extends Controller
     public function destroy($id)
     {
         try {
-            Gate::authorize('edit','roles');
-            DB:: table('role_permission')->where('role_id', $id)->delete();
+            Gate::authorize('edit', 'roles');
+            DB::table('role_permission')->where('role_id', $id)->delete();
             $this->roleRepository->deletedByID($id);
             return $this->successJsonResponse('Role delete successfully');
         } catch (\Exception $e) {

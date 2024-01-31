@@ -88,7 +88,9 @@ Abstract class BaseRepository {
     public function updateByID($id, array $modelData)
     {
         $model = $this->findOrFailByID($id);
-        return $model->update($modelData);
+        $model->update($modelData);
+        $model->refresh();
+        return $model;
     }
 
     public function deletedByID($id)
