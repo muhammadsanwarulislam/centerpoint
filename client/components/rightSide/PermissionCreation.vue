@@ -34,6 +34,7 @@ async function getPermissionByID(id) {
         form.value = {
             name: data.name,
         };
+        permission_id.value = id;
     } catch (error) {
         console.log(error);
     }
@@ -48,6 +49,7 @@ watch([current_page, search_data], () => {
 })
 
 const isEditing = computed(() => !!permission_id.value);
+console.log('isEditing',isEditing);
 
 // Create Permission Modal
 const is_show_modal = ref(false)
@@ -119,7 +121,7 @@ async function updatePermissionByID(id) {
         const index = permission_list.value.findIndex((item) => item.id === id);
         
         if (index !== -1) {
-            permission_list.value[index] = response.data.role;
+            permission_list.value[index] = response.data.permission;
         }
 
         push.success(response.message);
