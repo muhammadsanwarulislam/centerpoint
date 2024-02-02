@@ -8,6 +8,7 @@ const total_page = ref(0);
 const limit = ref(5);
 const is_loading = ref(false);
 const search_data = ref("");
+const user_id = ref(null);
 
 async function getUserList() {
   try {
@@ -36,6 +37,8 @@ watch([current_page, search_data], () => {
   getUserList();
 });
 
+const isEditing = computed(() => !!user_id.value);
+
 // Get role
 const role_list = ref([]);
 
@@ -48,6 +51,24 @@ async function getRoleList() {
   } catch (error) {
     console.log(error);
   }
+}
+
+//Get user by ID
+async function getUserByID(id) {
+    try {
+        const response = await $http(`/users/${id}`, {
+            method: "GET",
+        });
+        let data = response.data;
+        form.value = {
+            username: data.username,
+            email:data.email,
+            role:data.role.id
+        };
+        user_id.value = id;
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 // create user Modal
@@ -66,8 +87,11 @@ function closeModal() {
     role_id: "",
   };
 }
-function showModal() {
+function showModal(id) {
   is_show_modal.value = true;
+  if(id) {
+    getUserByID(id);
+  }
   getRoleList();
 }
 
@@ -97,6 +121,45 @@ async function createUser() {
     });
     push.success(response.message);
     user_list.value.unshift(response.data);
+    closeModal();
+  } catch (error) {
+    console.log(error);
+
+    const errors = error.data?.errors;
+    const defaultMessage = error.data?.message;
+    if (errors) {
+      if (errors.username) {
+        is_username_exist.value = errors.username[0];
+      }
+
+      if (errors.email) {
+        is_email_exist.value = errors.email[0];
+      }
+    } else {
+      push.error(defaultMessage || "An unknown error occurred");
+    }
+  } finally {
+    spinner.value = false;
+  }
+}
+
+async function updateUserByID(id) {
+  try {
+    reset();
+    if (
+      form.value.username === "" ||
+      form.value.email === "" ||
+      form.value.role_id === ""
+    ) {
+      is_validation.value = true;
+      return;
+    }
+    spinner.value = true;
+    const response = await $http(`/users/${id}`, {
+      method: "PUT",
+      body: form.value,
+    });
+    push.success(response.message);
     closeModal();
   } catch (error) {
     console.log(error);
@@ -324,7 +387,7 @@ function reset() {
               {{ item.role?.name }}
             </td>
             <td class="px-4 py-4 text-center text-gray-900">
-              <button class="mr-2 table-btn">
+              <button class="mr-2 table-btn" @click="showModal(item.id)">
                 <svg
                   width="20"
                   height="20"
@@ -527,9 +590,9 @@ function reset() {
               </svg>
               Loading...
             </fwb-button>
-            <fwb-button v-else @click="createUser" color="green">
-              Submit
-            </fwb-button>
+            <fwb-button v-else @click="isEditing ? updateUserByID(role_id) : createUser()" color="green">
+                            {{ isEditing ? "Update" : "Submit"}}
+                        </fwb-button>
           </div>
         </template>
       </fwb-modal>

@@ -90,17 +90,7 @@ async function createPermission() {
         permission_list.value.unshift(response.data.permission)
         closeModal()
     } catch (error) {
-        console.log(error)
-
-        const errors = error.data?.errors;
-        const defaultMessage = error.data?.message;
-        if (errors) {
-            if (errors.name) {
-                is_name_exist.value = errors.name[0];
-            }
-        } else {
-            push.error(defaultMessage || 'An unknown error occurred');
-        }
+        handleApiError(error);
     } finally {
         spinner.value = false
     }
