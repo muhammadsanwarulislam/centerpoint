@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Controllers;
+namespace App\Trait;
 
 
 use Illuminate\Http\Response;

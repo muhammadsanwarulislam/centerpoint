@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Core\Auth;
 
 use Illuminate\Http\Request;
+use App\Trait\JsonResponseTrait;
+use Illuminate\Support\Facades\DB;
+use Repository\Role\RoleRepository;
 use Repository\User\UserRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\User\UserResource;
-use App\Http\Controllers\JsonResponseTrait;
 use App\Http\Requests\Auth\LoginPostRequest;
 use App\Events\LoggedInUserAccessTokenStoreEvent;
 use App\Http\Requests\Auth\RegistrationPostRequest;
-use Repository\Role\RoleRepository;
-use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Core\Permission;
 
+use Illuminate\Http\Request;
+use App\Trait\JsonResponseTrait;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Http\Request;
-use App\Http\Controllers\JsonResponseTrait;
 use Repository\Permission\PermissionRepository;
 use App\Http\Resources\Permission\PermissionResource;
 use App\Http\Requests\Permission\PermissionCreateOrUpdateRequest;

@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Core\Role;
 
 use Illuminate\Http\Request;
+use App\Trait\JsonResponseTrait;
 use Illuminate\Support\Facades\DB;
 use Repository\Role\RoleRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\Role\RoleResource;
-use App\Http\Controllers\JsonResponseTrait;
 use Repository\Permission\PermissionRepository;
 use App\Http\Requests\Role\RoleCreateOrUpdateRequest;
 
