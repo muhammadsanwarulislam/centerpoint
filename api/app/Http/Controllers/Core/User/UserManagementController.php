@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Core\User;
 
 use Illuminate\Http\Request;
-use App\Trait\JsonResponseTrait;
+use App\Traits\JsonResponseTrait;
 use Illuminate\Support\Facades\DB;
 use Repository\User\UserRepository;
 use App\Http\Controllers\Controller;
