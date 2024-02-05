@@ -84,7 +84,7 @@ class UserManagementController extends Controller
         try {
             Gate::authorize('edit', 'users');
             $user = $this->userRepository->updateByID($id, $request->all());
-            return $this->createdJsonResponse('User create successfully', ['user' => $user]);
+            return $this->createdJsonResponse('User update successfully', ['user' => new UserResource($user)]);
         } catch (\Exception $e) {
             return $this->errorJsonResponse('Error: ' . $e->getMessage());
         }

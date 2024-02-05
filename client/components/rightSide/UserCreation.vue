@@ -15,8 +15,8 @@ async function getUserList() {
     user_list.value = [];
     is_loading.value = true;
     const response = await $http(`/users?option=search&offset=${current_page.value}&limit=${limit.value}&searchData=${search_data.value}`, {
-        method: "GET",
-      }
+      method: "GET",
+    }
     );
     user_list.value = response.data;
     total_page.value = Math.ceil(response.total / limit.value);
@@ -61,7 +61,7 @@ async function getUserByID(id) {
     form.value = {
       username: data.username,
       email: data.email,
-      role: data.role.id,
+      role_id: data.role.id,
     };
     user_id.value = id;
   } catch (error) {
@@ -184,33 +184,33 @@ function reset() {
 }
 
 async function handleApiError(error) {
-    const errors = error.data?.errors;
-    const defaultMessage = error.data?.message;
-    if (errors) {
-        if (errors.name) {
-            is_name_exist.value = errors.name[0];
-        }
-    } else {
-        push.error(defaultMessage || "An unknown error occurred");
+  const errors = error.data?.errors;
+  const defaultMessage = error.data?.message;
+  if (errors) {
+    if (errors.name) {
+      is_name_exist.value = errors.name[0];
     }
+  } else {
+    push.error(defaultMessage || "An unknown error occurred");
+  }
 }
 </script>
 <template>
   <div>
     <h1 class="text-2xl font-bold pb-3">User Creations</h1>
-    <!-- <div class="flex flex-wrap">
-            <div v-for="item in 4" :key="item" class="w-full sm:w-1/2 lg:w-1/4 pr-3 pb-3">
-                <div
-                    class="block max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                    <div class="flex justify-center items-center py-2">
-                        <p class="text-4xl font-bold"> 63 </p>
-                    </div>
-                    <h5 class="mb-2 font-bold tracking-tight text-gray-900 dark:text-white text-center">
-                        Total Collection
-                    </h5>
-                </div>
-            </div>
-        </div> -->
+    <div class="flex flex-wrap">
+      <div v-for="item in 4" :key="item" class="w-full sm:w-1/2 lg:w-1/4 pr-3 pb-3">
+        <div
+          class="block max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+          <div class="flex justify-center items-center py-2">
+            <p class="text-4xl font-bold"> 63 </p>
+          </div>
+          <h5 class="mb-2 font-bold tracking-tight text-gray-900 dark:text-white text-center">
+            Total Collection
+          </h5>
+        </div>
+      </div>
+    </div>
     <div class="flex flex-wrap gap-3 items-center justify-between pt-3 pb-5">
       <div class="bg-white xs:w-full sm:w-full md:w-2/5 lg:w-2/5 sm-w-100">
         <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
@@ -223,28 +223,26 @@ async function handleApiError(error) {
             </svg>
           </div>
           <input v-model="search_data" v-on:keyup.enter="getUserList"
-            class="bg-white block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Type Person Name" />
-          <!-- <button type="submit"
-                        class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button> -->
         </div>
       </div>
 
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <!-- <div class="flex flex-wrap items-center gap-3 sm-justify-end">
-                    <div class="flex items-center">
-                        <span class="text-gray-700 dark:text-gray-400 pr-3">From</span>
-                        <input type="date"
-                            class="bg-white block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Select Date">
-                    </div>
-                    <div class="flex items-center">
-                        <span class="text-gray-700 dark:text-gray-400 pr-3">To</span>
-                        <input type="date"
-                            class="bg-white block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Select Date">
-                    </div>
-                </div> -->
+        <div class="flex flex-wrap items-center gap-3 sm-justify-end">
+          <div class="flex items-center">
+            <span class="text-gray-700 dark:text-gray-400 pr-3">From</span>
+            <input type="date"
+              class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Select Date">
+          </div>
+          <div class="flex items-center">
+            <span class="text-gray-700 dark:text-gray-400 pr-3">To</span>
+            <input type="date"
+              class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Select Date">
+          </div>
+        </div>
         <button class="button bg-white">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_13_324)">
@@ -380,7 +378,7 @@ async function handleApiError(error) {
     <div class="fwb-modal">
       <fwb-modal v-if="is_show_modal" @close="closeModal" persistent size="5xl">
         <template #header>
-          <div class="flex items-center text-lg text-xl font-medium text-gray-900 dark:text-white">
+          <div class="flex items-center text-xl font-medium text-gray-900 dark:text-white">
             Add User
           </div>
         </template>
@@ -434,18 +432,7 @@ async function handleApiError(error) {
                 </span>
               </div>
             </div>
-            <!-- <div class="flex items-center pt-4 w-full sm:w-1/2 lg:w-1/2">
-                            <p class="w-56 pl-3 pr-3">Mobile</p>
-                            <input type="text"
-                                class="bg-white block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Mobile">
-                        </div>
-                        <div class="flex items-center pt-4 w-full">
-                            <p class="w-56 small-s-w pl-3 pr-3">Address</p>
-                            <input type="text"
-                                class="bg-white block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Address">
-                        </div> -->
+
           </div>
         </template>
         <template #footer>
