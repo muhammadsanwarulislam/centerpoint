@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\RegisteredUserConfirmationMail;
 
-class UserCreatedListener implements ShouldQueue
+class SentRegisteredUserEmailListener implements ShouldQueue
 {
     public function __construct()
     {

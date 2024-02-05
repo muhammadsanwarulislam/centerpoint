@@ -3,10 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Events\UserCreated;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Notifications\Notifiable;
+use App\Events\SentRegisteredUserEmailEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -46,7 +46,7 @@ class User extends Authenticatable
     ];
 
     protected $dispatchesEvents = [
-        'created' => UserCreated::class
+        'created' => SentRegisteredUserEmailEvent::class
     ];
 
     /**
