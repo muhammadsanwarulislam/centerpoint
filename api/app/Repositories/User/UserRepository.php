@@ -33,7 +33,7 @@ class UserRepository extends BaseRepository
                     ->get();
         
     }
-    
+
     public function generateAccessToken(User $user): string
     {
         return $user->createToken('authToken')->accessToken;
