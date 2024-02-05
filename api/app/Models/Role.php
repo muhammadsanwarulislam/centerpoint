@@ -16,6 +16,10 @@ class Role extends Model
         return $this->belongsToMany(Permission::class, 'role_permission');
     }
 
+    public function menus()
+    {
+        return $this->hasMany(Menu::class);
+    }
     public function menuItems()
     {
         return $this->hasMany(MenuItem::class);

@@ -17,12 +17,10 @@ return new class extends Migration
             $table->string('label');
             $table->string('route');
             $table->unsignedBigInteger('permission_id')->nullable();
-            $table->unsignedBigInteger('role_id')->nullable();
             $table->timestamps();
             
             $table->foreign('menu_id')->references('id')->on('menus');
             $table->foreign('permission_id')->references('id')->on('permissions');
-            $table->foreign('role_id')->references('id')->on('roles');
         });
     }
 

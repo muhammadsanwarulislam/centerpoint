@@ -12,8 +12,7 @@ class MenuItem extends Model
         "menu_id",
         "label",
         "route",
-        "permission_id",
-        "role_id"
+        "permission_id"
     ];
     public function menu()
     {
