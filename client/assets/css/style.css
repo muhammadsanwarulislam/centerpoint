@@ -307,7 +307,8 @@ button:focus {
 /*-------- End Toggle Button --------*/
 
 /*-------- sidebar Start --------*/
-.sidebar ul > li > a {
+.sidebar ul > li > a,
+.sidebar ul > li > button {
   cursor: pointer;
   border-bottom: 1px solid var(--border-color);
   transition: all 0.3s ease-in-out;

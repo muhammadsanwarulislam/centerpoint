@@ -7,7 +7,6 @@ export type User = {
 export type LoginCredentials = {
 	email: string;
 	password: string;
-	domain: string;
 };
 
 export type RegisterCredentials = {
@@ -80,6 +79,7 @@ export const useAuth = () => {
 		cookie.value = null;
 		// window.location.reload();
 		router.push('/login');
+		storeUserData().get_component = ''
 		// await $http(LOGOUT);
 	}
 
