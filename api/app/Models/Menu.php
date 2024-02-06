@@ -11,9 +11,13 @@ class Menu extends Model
     protected $fillable = [
         "name",
         "role_id",
+        "label",
+        "component",
+        "ordering",
+        "parent_id",
     ];
     public function menuItems()
     {
-        return $this->hasMany(MenuItem::class);
+        return $this->hasMany(self::class, 'parent_id');
     }
 }

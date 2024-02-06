@@ -34,15 +34,25 @@ class MenuManageController extends Controller
     public function store(MenuCreateOrUpdateRequest $request)
     {
         try {
-            DB::beginTransaction();
-            $menu = $this->menuRepository->create($request->validated());
-            $this->menuItemRepository->create($request->validated()+["menu_id"=> $menu->id]);
-            DB::commit();
+            if(!empty($request->parent_id)) {
+                $menu = $this->menuRepository->create(
+                    $request->validated()+[
+                        "parent_id"=> $request->parent_id,
+                        "ordering"=> $request->ordering
+                    ]
+                );
+            }else{
+                $menu = $this->menuRepository->create(
+                    $request->validated()+[
+                        "role_id"=> $request->role_id,
+                        "ordering"=> $request->ordering,
+                        "parent_id"=> $request->parent_id,
+                        ]
+                );
+            }
 
             return $this->createdJsonResponse('Menu create successfully', new MenuResource($menu));
         } catch (\Exception $e) {
-            DB::rollBack();
-
             return $this->errorJsonResponse('Error: ' . $e->getMessage());
         }
     }
@@ -52,7 +62,12 @@ class MenuManageController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $menu = $this->menuRepository->findByID($id);
+            return $this->successJsonResponse("The menu id is: $id", new MenuResource($menu));
+        } catch (\Exception $e) {
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -60,7 +75,28 @@ class MenuManageController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            if(empty($request->parent_id)) {
+                $menu = $this->menuRepository->updateByID($id,
+                    $request->validated()+[
+                        "parent_id"=> $request->parent_id,
+                        "ordering"=> $request->ordering
+                    ]
+                );
+            }else{
+                $menu = $this->menuRepository->updateByID($id,
+                    $request->validated()+[
+                        "role_id"=> $request->role_id,
+                        "ordering"=> $request->ordering,
+                        "parent_id"=> $request->parent_id
+                        ]
+                );
+            }
+
+            return $this->createdJsonResponse('Menu create successfully', new MenuResource($menu));
+        } catch (\Exception $e) {
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 
     /**

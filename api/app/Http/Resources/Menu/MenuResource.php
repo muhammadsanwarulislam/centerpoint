@@ -17,7 +17,11 @@ class MenuResource extends JsonResource
         return [
             "id"        => $this->id,
             "name"      => $this->name,
-            "menuItems" => $this->menuItems,
+            "label"     => $this->label,
+            "component" => $this->component,
+            "ordering"  => $this->ordering,
+            "role_id"   => $this->role_id,
+            "parent_id" => $this->parent_id,
         ];
     }
 }

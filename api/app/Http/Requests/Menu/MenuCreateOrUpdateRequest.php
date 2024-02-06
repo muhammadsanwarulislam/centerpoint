@@ -22,11 +22,9 @@ class MenuCreateOrUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'          => 'required|string|alpha_dash|unique:menus',
-            'label'         => 'required|string|alpha_dash|unique:menu_items',
-            'role_id'       => 'required',
-            'permission_id' => 'required',
-            'route'         => 'required',
+            'name'          => 'required|string',
+            'label'         => 'required|string',
+            'component'     => 'required',
         ];
     }
 
@@ -39,12 +37,8 @@ class MenuCreateOrUpdateRequest extends FormRequest
     {
         return [
             'name.required'     => 'The name field is required.',
-            'name.alpha_dash'   => 'The name may only contain letters, numbers, dashes, and underscores.',
-            'name.unique'       => 'The name is already taken.',
             'label.required'    => 'The label field is required.',
-            'label.alpha_dash'  => 'The label may only contain letters, numbers, dashes, and underscores.',
-            'label.unique'      => 'The label is already taken.',
-            'route.required'    => 'The route field is required.',
+            'component.required'=> 'The component field is required.',
         ];
     }
 }
