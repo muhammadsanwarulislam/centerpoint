@@ -30,6 +30,9 @@ class PermissionSeeder extends Seeder
             'view_permissions',
             'edit_permissions',
 
+            'view_menus',
+            'edit_menus',
+
         ];
         //create define permissions
         foreach ($permissions as $permission) {

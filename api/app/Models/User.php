@@ -67,7 +67,7 @@ class User extends Authenticatable
 
     public function menus()
     {
-        return $this->hasMany(Menu::class,  'role_id','role_id')->with('menuItems');
+        return $this->hasMany(Menu::class,  'role_id','role_id')->with('menuItems')->orderBy('ordering','asc');
     }
 
     public function hasAccess($access) {
