@@ -20,4 +20,9 @@ class Menu extends Model
     {
         return $this->hasMany(self::class, 'parent_id');
     }
+
+    public function attachRolesToTheMenu()
+    {
+        return $this->belongsToMany(Role::class, 'menu_role_assignment');
+    }
 }

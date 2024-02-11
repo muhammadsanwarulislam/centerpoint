@@ -7,6 +7,7 @@ use App\Traits\JsonResponseTrait;
 use Illuminate\Support\Facades\DB;
 use Repository\Menu\MenuRepository;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\Menu\MenuResource;
 use Repository\MenuItem\MenuItemRepository;
 use App\Http\Requests\Menu\MenuCreateOrUpdateRequest;
@@ -14,8 +15,7 @@ use App\Http\Requests\Menu\MenuCreateOrUpdateRequest;
 class MenuManageController extends Controller
 {
     use JsonResponseTrait;
-    protected $menuRepository;
-    protected $menuItemRepository;
+    protected $menuRepository,$menuItemRepository;
     public function __construct(MenuRepository $menuRepository, MenuItemRepository $menuItemRepository) {
         $this->menuRepository = $menuRepository;
         $this->menuItemRepository = $menuItemRepository;
@@ -23,9 +23,22 @@ class MenuManageController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $offset         = $request['offset'];
+        $limit          = $request['limit'];
+        $option         = $request['option'];
+        $searchData     = $request['searchData'];
+        
+        try {
+            // Gate::authorize('view', 'menus');
+            $menus = $this->menuRepository->getAll($offset, $limit, $searchData, $option);
+            $totalCount = $menus['count'];
+            return $this->successJsonResponseWithLimitOffset('List of menus', $option, $offset, $limit, $totalCount, MenuResource::collection($menus['result']));
+        } catch (\Exception $e) {
+
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -104,6 +117,12 @@ class MenuManageController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            // Gate::authorize('edit', 'menus');
+            $this->menuRepository->deletedByID($id);
+            return $this->successJsonResponse('Menu delete successfully');
+        } catch (\Exception $e) {
+            return $this->errorJsonResponse('Error: ' . $e->getMessage());
+        }
     }
 }

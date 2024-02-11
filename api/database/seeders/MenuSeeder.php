@@ -18,70 +18,69 @@ class MenuSeeder extends Seeder
     }
 
     public function run() {
-        $defaultRoleId = $this->roleRepository->findOrFailByID(env('DEFAULT_ROLE_FOR_SEEDER'))->id;
-    
-        // Define menus with their child menus and ordering information
+        // Retrieve the role IDs for the roles you want to assign to menus
+        $admin = $this->roleRepository->getRoleIdByName(env('DEFAULT_ROLE_FOR_SEEDER'));
+        $viewer = $this->roleRepository->getRoleIdByName(env('DEFAULT_ROLE'));
+        // Define menus with their child menus, ordering information, and assigned roles
         $menus = [
             [
                 "name"      => "Dashboard",
                 "label"     => "List",
-                "component" => NULL,
+                "component" => "OverView",
                 "ordering"  => 1,
-                // "children"  => [
-                //     ["name" => "Child Menu 1", "label"=>"List", "ordering" => 1],
-                //     ["name" => "Child Menu 2", "label"=>"Create", "ordering" => 2],
-                // ]
+                "roles"     => [$admin, $viewer],
             ],
             [
-                "name"      => "Settings",
+                "name"      => "User",
                 "label"     => "List",
-                "component" => NULL,
+                "component" => "UserCreation",
                 "ordering"  => 2,
-                // "children"  => [
-                //     ["name" => "Child Menu 3", "label"=>"List", "ordering" => 1],
-                //     ["name" => "Child Menu 4", "label"=>"Create", "ordering" => 2],
-                // ]
+                "roles"     => [$viewer],
             ],
             [
-                "name"      => "Over View",
+                "name"      => "Role",
                 "label"     => "List",
-                "component" => NULL,
+                "component" => "RoleCreation",
+                "ordering"  => 3,
+                "roles"     => [$viewer],
+            ],
+            [
+                "name"      => "Permission",
+                "label"     => "List",
+                "component" => "PermissionCreation",
+                "ordering"  => 4,
+                "roles"     => [$viewer],
+            ],
+            [
+                "name"      => "Project",
+                "label"     => "List",
+                "component" => "ProjectCreation",
+                "ordering"  => 5,
+                "roles"     => [$viewer],
+            ],
+            [
+                "name"      => "Task",
+                "label"     => "List",
+                "component" => "TaskCreation",
                 "ordering"  => 6,
-                // "children"  => [
-                //     ["name" => "Child Menu 5", "label"=>"List", "ordering" => 1],
-                //     ["name" => "Child Menu 6", "label"=>"Create", "ordering" => 2],
-                // ]
+                "roles"     => [$admin,$viewer],
             ],
             // Add more menus and their child menus as needed
         ];
     
         foreach ($menus as $menuData) {
-            // Create or update the parent menu
-            $parentMenu = $this->menuRepository->model()::updateOrCreate(
+            $menu = $this->menuRepository->model()::updateOrCreate(
                 ["name" => $menuData['name']], 
                 [
                     "label"     => $menuData['label'],
                     "component" => $menuData['component'],
                     "ordering"  => $menuData['ordering'],
-                    "role_id"   => $defaultRoleId,
                     "parent_id" => NULL
                 ]
             );
-    
-            // Create or update the child menus for this parent menu
-            // foreach ($menuData['children'] as $childData) {
-            //     $this->menuRepository->model()::updateOrCreate(
-            //         ["name" => $childData['name']], 
-            //         [
-            //             "label"     => "List",
-            //             "component" => NULL,
-            //             "ordering"  => $childData['ordering'],
-            //             "parent_id" => $parentMenu->id
-            //         ]
-            //     );
-            // }
+
+            // Attach roles to the menu
+            $menu->attachRolesToTheMenu()->sync($menuData['roles']);
         }
     }
-    
-    
 }

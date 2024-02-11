@@ -65,11 +65,6 @@ class User extends Authenticatable
         return $this->role->permissions->pluck('name');
     }
 
-    public function menus()
-    {
-        return $this->hasMany(Menu::class,  'role_id','role_id')->with('menuItems')->orderBy('ordering','asc');
-    }
-
     public function hasAccess($access) {
         return $this->permissions()->contains($access);
     }

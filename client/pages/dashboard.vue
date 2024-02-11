@@ -6,6 +6,7 @@ definePageMeta({ middleware: ['auth'] });
 const component_id = ref(storeUserData().get_component || 'Overview')
 
 const over_view = resolveComponent('RightSideOverview')
+const menu_creation = resolveComponent('RightSideMenuCreation')
 const user_creation = resolveComponent('RightSideUserCreation')
 const role_creation = resolveComponent('RightSideRoleCreation')
 const permission_creation = resolveComponent('RightSidePermissionCreation')
@@ -13,6 +14,7 @@ const permission_creation = resolveComponent('RightSidePermissionCreation')
 const getComponent = computed(() => {
     switch (component_id.value) {
         case 'Overview' : return over_view
+        case 'MenuCreation' : return menu_creation
         case 'UserCreation' : return user_creation
         case 'RoleCreation' : return role_creation
         case 'PermissionCreation' : return permission_creation

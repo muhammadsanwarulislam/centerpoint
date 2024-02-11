@@ -20,8 +20,4 @@ class Role extends Model
     {
         return $this->hasMany(Menu::class);
     }
-    public function menuItems()
-    {
-        return $this->hasMany(MenuItem::class);
-    }
 }
