@@ -38,6 +38,31 @@ watch([current_page, search_data], () => {
 
 const isEditing = computed(() => !!menu_id.value);
 
+// Get role for select role id
+const role_list = ref([]);
+async function getRoleList() {
+    try {
+        const response = await $http(`/roles`, {
+            method: "GET",
+        });
+        role_list.value = response.data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// Get menus for select parent menu id
+const menus_for_parent_selections = ref([]);
+async function getMenusForParentSelection() {
+  try {
+    const response = await $http(`/menus`, {
+      method: "GET",
+    });
+    menus_for_parent_selections.value = response.data;
+  } catch (error) {
+    console.log(error);
+  }
+}
 //Get menu by ID
 async function getMenuByID(id) {
   try {
@@ -49,7 +74,8 @@ async function getMenuByID(id) {
       name: data.name,
       label: data.label,
       component: data.component,
-      ordering:data.ordering,
+      ordering: data.ordering,
+      roles: data.roles.map((item) => item.id),
     };
     menu_id.value = id;
   } catch (error) {
@@ -73,7 +99,8 @@ function closeModal() {
     name: "",
     label: "",
     component: "",
-    ordering: ""
+    ordering: "",
+    roles: [],
   };
 }
 function showModal(id) {
@@ -81,6 +108,8 @@ function showModal(id) {
   if (id) {
     getMenuByID(id);
   }
+  getMenusForParentSelection();
+  getRoleList();
 }
 
 // post create menu
@@ -89,7 +118,9 @@ const form = ref({
   name: "",
   label: "",
   component: "",
-  ordering: ""
+  ordering: "",
+  roles: [],
+  parent_id:""
 });
 
 async function createMenu() {
@@ -124,7 +155,7 @@ async function updateMenuByID(id) {
     if (
       form.value.name === "" ||
       form.value.label === "" ||
-      form.value.component === ""||
+      form.value.component === "" ||
       form.value.ordering === ""
     ) {
       is_validation.value = true;
@@ -380,7 +411,41 @@ async function handleApiError(error) {
                 </span>
               </div>
             </div>
-
+            <div class="flex items-start pt-4 w-full sm:w-1/2 lg:w-1/2">
+              <label for="activity"
+                class="w-56 block pl-3 pr-3 text-sm font-medium text-gray-900 dark:text-white">Parent</label>
+              <div class="flex flex-col items-start w-full">
+                <select id="activity" v-model="form.parent_id" :class="{
+                  'border-red-500': is_validation && form.parent_id === '',
+                }"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option selected disabled value="">Select Parent</option>
+                  <option v-for="(item, index) in menus_for_parent_selections" :key="index" :value="item.id">
+                    {{ item.name }}
+                  </option>
+                </select>
+                <span v-if="is_validation && form.parent_id === ''" class="text-red-500">Please select parent
+                </span>
+              </div>
+            </div>
+            <div class="flex items-start pt-4 w-full">
+              <p class="w-56 pl-3 pr-3">Roles</p>
+              <ul
+                class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <li v-for="(item, index) in role_list" :key="index" :value="item.id"
+                  class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                  <div class="flex items-center ps-3">
+                    <input :id="'vue-checkbox-list' + item.id" type="checkbox" v-model="form.roles" :value="item.id"
+                      :checked="item.id == form.roles.id"
+                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+                    <label :for="'vue-checkbox-list' + item.id"
+                      class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{
+                        item.name }}
+                    </label>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
         </template>
         <template #footer>
@@ -401,7 +466,7 @@ async function handleApiError(error) {
               Loading...
             </fwb-button>
             <fwb-button v-else @click="console.log(isEditing)
-             ? updateMenuByID(menu_id) : createMenu()" color="green">
+              ? updateMenuByID(menu_id) : createMenu()" color="green">
               {{ isEditing ? "Update" : "Submit" }}
             </fwb-button>
           </div>

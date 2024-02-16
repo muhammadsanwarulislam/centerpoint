@@ -13,7 +13,6 @@ class Menu extends Model
         "label",
         "component",
         "ordering",
-        "parent_id"
     ];
 
     public function attachRolesToTheMenu()

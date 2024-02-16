@@ -15,8 +15,9 @@ use App\Http\Requests\Menu\MenuCreateOrUpdateRequest;
 class MenuManageController extends Controller
 {
     use JsonResponseTrait;
-    protected $menuRepository,$menuItemRepository;
-    public function __construct(MenuRepository $menuRepository, MenuItemRepository $menuItemRepository) {
+    protected $menuRepository, $menuItemRepository;
+    public function __construct(MenuRepository $menuRepository, MenuItemRepository $menuItemRepository)
+    {
         $this->menuRepository = $menuRepository;
         $this->menuItemRepository = $menuItemRepository;
     }
@@ -25,11 +26,11 @@ class MenuManageController extends Controller
      */
     public function index(Request $request)
     {
-        $offset         = $request['offset'];
-        $limit          = $request['limit'];
-        $option         = $request['option'];
-        $searchData     = $request['searchData'];
-        
+        $offset = $request['offset'];
+        $limit = $request['limit'];
+        $option = $request['option'];
+        $searchData = $request['searchData'];
+
         try {
             // Gate::authorize('view', 'menus');
             $menus = $this->menuRepository->getAll($offset, $limit, $searchData, $option);
@@ -47,25 +48,37 @@ class MenuManageController extends Controller
     public function store(MenuCreateOrUpdateRequest $request)
     {
         try {
-            if(!empty($request->parent_id)) {
+            DB::beginTransaction();
+            if (!empty($request->parent_id)) {
                 $menu = $this->menuRepository->create(
-                    $request->validated()+[
-                        "parent_id"=> $request->parent_id,
-                        "ordering"=> $request->ordering
+                    $request->validated() + [
+                        "ordering" => $request->ordering
                     ]
                 );
-            }else{
+                // If menu creation is successful, proceed to handle role assignments
+                if ($menu) {
+                    // Attach roles to the menu
+                    $roles = $request->input('role_id', []);
+                    $menu->attachRolesToTheMenu()->attach($roles, ['parent_id' => $request->input('parent_id')]);
+                }
+                DB::rollBack();
+            } else {
                 $menu = $this->menuRepository->create(
-                    $request->validated()+[
-                        "role_id"=> $request->role_id,
-                        "ordering"=> $request->ordering,
-                        "parent_id"=> $request->parent_id,
-                        ]
+                    $request->validated() + [
+                        "ordering" => $request->ordering,
+                    ]
                 );
+                if ($menu) {
+                    // Attach roles to the menu
+                    $roles = $request->input('role_id', []);
+                    $menu->attachRolesToTheMenu()->attach($roles);
+                }
+                DB::rollBack();
             }
-
+            DB::commit();
             return $this->createdJsonResponse('Menu create successfully', new MenuResource($menu));
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->errorJsonResponse('Error: ' . $e->getMessage());
         }
     }
@@ -89,20 +102,22 @@ class MenuManageController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            if(empty($request->parent_id)) {
-                $menu = $this->menuRepository->updateByID($id,
-                    $request->validated()+[
-                        "parent_id"=> $request->parent_id,
-                        "ordering"=> $request->ordering
+            if (empty($request->parent_id)) {
+                $menu = $this->menuRepository->updateByID(
+                    $id,
+                    $request->validated() + [
+                        "parent_id" => $request->parent_id,
+                        "ordering" => $request->ordering
                     ]
                 );
-            }else{
-                $menu = $this->menuRepository->updateByID($id,
-                    $request->validated()+[
-                        "role_id"=> $request->role_id,
-                        "ordering"=> $request->ordering,
-                        "parent_id"=> $request->parent_id
-                        ]
+            } else {
+                $menu = $this->menuRepository->updateByID(
+                    $id,
+                    $request->validated() + [
+                        "role_id" => $request->role_id,
+                        "ordering" => $request->ordering,
+                        "parent_id" => $request->parent_id
+                    ]
                 );
             }
 
