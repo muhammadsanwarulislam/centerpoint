@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('role_id');
             $table->unsignedBigInteger('menu_id');
-            // You can add additional columns here if needed
+            $table->unsignedInteger('parent_id')->nullable();
             $table->timestamps();
 
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->foreign('menu_id')->references('id')->on('menus')->onDelete('cascade');
+            $table->foreign('parent_id')->references('id')->on('menus')->onDelete('cascade');
         });
     }
 

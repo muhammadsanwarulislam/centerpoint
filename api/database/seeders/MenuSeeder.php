@@ -23,6 +23,7 @@ class MenuSeeder extends Seeder
         $admin = $this->roleRepository->getRoleIdByName(env('DEFAULT_ROLE_FOR_SEEDER'));
         $viewer = $this->roleRepository->getRoleIdByName(env('DEFAULT_ROLE'));
         // Define menus with their child menus, ordering information, and assigned roles
+
         $menus = [
             [
                 "name"      => "Dashboard",
@@ -62,7 +63,6 @@ class MenuSeeder extends Seeder
                     "label"     => $menuData['label'],
                     "component" => $menuData['component'],
                     "ordering"  => $menuData['ordering'],
-                    "parent_id" => NULL,
                     "created_at"=> new \DateTime(),
                 ]
             );

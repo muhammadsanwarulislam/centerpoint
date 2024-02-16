@@ -18,11 +18,6 @@ class Role extends Model
 
     public function getMenusAccordingToTheRoleId()
     {
-        return $this->belongsToMany(Menu::class,'menu_role_assignment','role_id');
-    }
-
-    public function getChildToTheMenu()
-    {
-        return $this->belongsToMany(Menu::class,'menu_role_assignment','menu_id');
+        return $this->belongsToMany(Menu::class,'menu_role_assignment','role_id')->withPivot('role_id','menu_id','parent_id')->withTimestamps();
     }
 }

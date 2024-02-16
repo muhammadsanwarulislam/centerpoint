@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('label');
             $table->string('component')             ->nullable();
             $table->integer('ordering')             ->default(0);
-            $table->unsignedInteger('parent_id')    ->nullable();
             $table->timestamps();
         });
     }

@@ -15,10 +15,6 @@ class Menu extends Model
         "ordering",
         "parent_id"
     ];
-    public function menuItems()
-    {
-        return $this->hasMany(self::class, 'parent_id');
-    }
 
     public function attachRolesToTheMenu()
     {
