@@ -27,7 +27,10 @@ class RoleSeeder extends Seeder
         ];
         //create define roles
         foreach($roles as $role) {
-            $this->roleRepository->model()::create(['name' => $role]);
+            $this->roleRepository->model()::updateOrCreate([
+                'name' => $role,
+                'created_at'=> new \DateTime()
+            ]);
         }
     }
 }

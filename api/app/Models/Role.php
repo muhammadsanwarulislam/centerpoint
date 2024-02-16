@@ -16,8 +16,13 @@ class Role extends Model
         return $this->belongsToMany(Permission::class, 'role_permission');
     }
 
-    public function menus()
+    public function getMenusAccordingToTheRoleId()
     {
-        return $this->hasMany(Menu::class);
+        return $this->belongsToMany(Menu::class,'menu_role_assignment','role_id');
+    }
+
+    public function getChildToTheMenu()
+    {
+        return $this->belongsToMany(Menu::class,'menu_role_assignment','menu_id');
     }
 }

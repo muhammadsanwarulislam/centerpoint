@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use DateTime;
 use Illuminate\Database\Seeder;
 use Repository\Menu\MenuRepository;
 use Repository\Role\RoleRepository;
@@ -51,20 +52,6 @@ class MenuSeeder extends Seeder
                 "ordering"  => 4,
                 "roles"     => [$viewer],
             ],
-            [
-                "name"      => "Project",
-                "label"     => "List",
-                "component" => "ProjectCreation",
-                "ordering"  => 5,
-                "roles"     => [$viewer],
-            ],
-            [
-                "name"      => "Task",
-                "label"     => "List",
-                "component" => "TaskCreation",
-                "ordering"  => 6,
-                "roles"     => [$admin,$viewer],
-            ],
             // Add more menus and their child menus as needed
         ];
     
@@ -75,7 +62,8 @@ class MenuSeeder extends Seeder
                     "label"     => $menuData['label'],
                     "component" => $menuData['component'],
                     "ordering"  => $menuData['ordering'],
-                    "parent_id" => NULL
+                    "parent_id" => NULL,
+                    "created_at"=> new \DateTime(),
                 ]
             );
 

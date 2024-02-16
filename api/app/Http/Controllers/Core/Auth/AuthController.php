@@ -33,7 +33,7 @@ class AuthController extends Controller
         try {
             DB::beginTransaction();
             $user = $this->userRepository->create($request->all() + [
-                'role_id' => $this->roleRepository->defaultRoleID(env('DEFAULT_ROLE'))
+                'role_id' => $this->roleRepository->getRoleIdByName(env('DEFAULT_ROLE'))
             ]);
 
             DB::commit();

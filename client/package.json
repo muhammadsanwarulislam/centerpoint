@@ -13,12 +13,12 @@
 	},
 	"devDependencies": {
 		"@nuxtjs/i18n": "^8.0.0",
-		"@nuxtjs/tailwindcss": "^6.11.2",
+		"@nuxtjs/tailwindcss": "^6.9.4",
 		"@pinia-plugin-persistedstate/nuxt": "^1.2.0",
 		"@tailwindcss/forms": "^0.5.7",
-		"@types/node": "^20.11.10",
-		"nuxt": "^3.9.3",
-		"vue": "^3.4.15",
+		"@types/node": "^20.9.0",
+		"nuxt": "^3.8.1",
+		"vue": "^3.3.9",
 		"vue-router": "^4.2.5"
 	},
 	"engines": {
@@ -33,6 +33,6 @@
 		"npm": "^10.4.0",
 		"nuxt-swiper": "^1.2.2",
 		"pinia": "^2.1.7",
-		"tailwindcss": "^3.4.1"
+		"tailwindcss": "^3.3.5"
 	}
 }

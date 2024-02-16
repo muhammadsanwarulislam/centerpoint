@@ -36,7 +36,10 @@ class PermissionSeeder extends Seeder
         ];
         //create define permissions
         foreach ($permissions as $permission) {
-            $this->permissionRepository->model()::create(['name' => $permission]);
+            $this->permissionRepository->model()::updateOrCreate([
+                'name'      => $permission,
+                'created_at'=> new \DateTime(),
+            ]);
         }
     }
 }
