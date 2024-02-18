@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('label');
             $table->string('component')             ->nullable();
             $table->integer('ordering')             ->default(0);
+            $table->enum('type', ['Parent','Child']) ->default('Parent');
+            $table->tinyInteger('status') ->default(0);
             $table->timestamps();
         });
     }
