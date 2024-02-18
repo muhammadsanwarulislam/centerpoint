@@ -53,6 +53,13 @@ class MenuSeeder extends Seeder
                 "ordering"  => 4,
                 "roles"     => [$viewer],
             ],
+            [
+                "name"      => "Menu",
+                "label"     => "List",
+                "component" => "MenuCreation",
+                "ordering"  => 5,
+                "roles"     => [$admin],
+            ],
             // Add more menus and their child menus as needed
         ];
     

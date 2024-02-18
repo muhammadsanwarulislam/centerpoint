@@ -76,6 +76,7 @@ async function getMenuByID(id) {
       component: data.component,
       ordering: data.ordering,
       roles: data.roles.map((item) => item.id),
+      type:data.type
     };
     menu_id.value = id;
   } catch (error) {
@@ -84,12 +85,12 @@ async function getMenuByID(id) {
 }
 
 // create menu Modal
-const is_show_modal = ref(false);
-const is_validation = ref(false);
-const is_name_exist = ref("");
-const is_label_exist = ref("");
-const is_ordering_exist = ref("");
-const is_component_exist = ref("");
+const is_show_modal   = ref(false);
+const is_validation   = ref(false);
+const is_name_exist   = ref("");
+const is_label_exist  = ref("");
+const is_ordering_exist   = ref("");
+const is_component_exist  = ref("");
 
 function closeModal() {
   is_show_modal.value = false;
@@ -101,6 +102,8 @@ function closeModal() {
     component: "",
     ordering: "",
     roles: [],
+    parent_id:"",
+    type:""
   };
 }
 function showModal(id) {
@@ -120,7 +123,8 @@ const form = ref({
   component: "",
   ordering: "",
   roles: [],
-  parent_id:""
+  parent_id:"",
+  type:""
 });
 
 async function createMenu() {
@@ -130,7 +134,8 @@ async function createMenu() {
       form.value.name === "" ||
       form.value.label === "" ||
       form.value.component === "" ||
-      form.value.ordering === ""
+      form.value.ordering === "" ||
+      form.value.type === ""
     ) {
       is_validation.value = true;
       return;
@@ -372,13 +377,26 @@ async function handleApiError(error) {
                 }"
                   class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Enter label" />
-                <span v-if="is_validation && form.label === ''" class="text-red-500">Please enter label
-                </span>
-                <span v-if="is_label_exist" class="text-red-500">
-                  {{ is_label_exist }}
-                </span>
+                  <span v-if="is_validation && form.label === ''" class="text-red-500">Please enter label
+                  </span>
+                  <span v-if="is_label_exist" class="text-red-500">
+                    {{ is_label_exist }}
+                  </span>
+                </div>
               </div>
-            </div>
+              <div class="flex items-start pt-4 w-full sm:w-1/2 lg:w-1/2">
+                <p class="w-56 pl-3 pr-3">Type</p>
+                <div class="flex flex-col items-start w-full">
+                  <input type="text" v-model="form.type" :class="{
+                    'border-red-500': is_validation && form.type === '',
+                  }"
+                    class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Enter name" />
+                  <span v-if="is_validation && form.type === ''" class="text-red-500">
+                    Please enter menu type
+                  </span>
+                </div>
+              </div>
             <div class="flex items-start pt-4 w-full sm:w-1/2 lg:w-1/2">
               <label for="activity"
                 class="w-56 block pl-3 pr-3 text-sm font-medium text-gray-900 dark:text-white">Component</label>

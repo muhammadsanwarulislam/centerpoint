@@ -2,18 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\CheckMenuTypeStatusEnum;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Menu extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        "name",
-        "label",
-        "component",
-        "ordering",
-    ];
+    protected $guarded = [];
+    public function getStatusAttribute($value)
+    {
+        return $value ? CheckMenuTypeStatusEnum::$value() : null;
+    }
+
+    public function setStatusAttribute($value)
+    {
+        $this->attributes['type'] = $value;
+    }
 
     public function attachRolesToTheMenu()
     {

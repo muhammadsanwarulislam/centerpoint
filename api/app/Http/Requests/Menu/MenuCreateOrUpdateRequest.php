@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Menu;
 
+use App\Enums\CheckMenuTypeStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
 class MenuCreateOrUpdateRequest extends FormRequest
@@ -25,6 +26,7 @@ class MenuCreateOrUpdateRequest extends FormRequest
             'name'          => 'required|string',
             'label'         => 'required|string',
             'component'     => 'required',
+            'type'          => ['required', 'string', 'in:' . implode(',', CheckMenuTypeStatusEnum::toArray())],
         ];
     }
 
@@ -39,6 +41,8 @@ class MenuCreateOrUpdateRequest extends FormRequest
             'name.required'     => 'The name field is required.',
             'label.required'    => 'The label field is required.',
             'component.required'=> 'The component field is required.',
+            'type.required'     => 'The type is required',
+            'type.in'           => 'Invalid type value'
         ];
     }
 }
