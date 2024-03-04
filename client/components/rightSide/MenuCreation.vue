@@ -15,9 +15,11 @@ async function getMenuList() {
   try {
     menu_list.value = [];
     is_loading.value = true;
-    const response = await $http(`/menus?option=search&offset=${current_page.value}&limit=${limit.value}&searchData=${search_data.value}`, {
-      method: "GET",
-    }
+    const response = await $http(
+      `/menus?option=search&offset=${current_page.value}&limit=${limit.value}&searchData=${search_data.value}`,
+      {
+        method: "GET",
+      }
     );
     menu_list.value = response.data;
     total_page.value = Math.ceil(response.total / limit.value);
@@ -41,21 +43,21 @@ const isEditing = computed(() => !!menu_id.value);
 // Get role for select role id
 const role_list = ref([]);
 async function getRoleList() {
-    try {
-        const response = await $http(`/roles`, {
-            method: "GET",
-        });
-        role_list.value = response.data;
-    } catch (error) {
-        console.log(error);
-    }
+  try {
+    const response = await $http(`/roles`, {
+      method: "GET",
+    });
+    role_list.value = response.data;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // Get menus for select parent menu id
 const menus_for_parent_selections = ref([]);
 async function getMenusForParentSelection() {
   try {
-    const response = await $http(`/menus`, {
+    const response = await $http(`/menus?type=Parent`, {
       method: "GET",
     });
     menus_for_parent_selections.value = response.data;
@@ -71,39 +73,40 @@ async function getMenuByID(id) {
     });
     let data = response.data;
     form.value = {
-      name: data.name,
+      name_en: data.name_en,
+      name_bn: data.name_bn,
       label: data.label,
       component: data.component,
       ordering: data.ordering,
+      type:data.type,
       roles: data.roles.map((item) => item.id),
-      type:data.type
     };
     menu_id.value = id;
+    
   } catch (error) {
     console.log(error);
   }
 }
 
 // create menu Modal
-const is_show_modal   = ref(false);
-const is_validation   = ref(false);
-const is_name_exist   = ref("");
-const is_label_exist  = ref("");
-const is_ordering_exist   = ref("");
-const is_component_exist  = ref("");
+const is_show_modal = ref(false);
+const is_validation = ref(false);
+const is_name_exist = ref("");
+const is_label_exist = ref("");
+const is_ordering_exist = ref("");
+const is_component_exist = ref("");
 
 function closeModal() {
   is_show_modal.value = false;
   is_validation.value = false;
   reset();
   form.value = {
-    name: "",
+    name_en: "",
+    name_bn: "",
     label: "",
     component: "",
     ordering: "",
     roles: [],
-    parent_id:"",
-    type:""
   };
 }
 function showModal(id) {
@@ -118,13 +121,14 @@ function showModal(id) {
 // post create menu
 const spinner = ref(false);
 const form = ref({
-  name: "",
+  name_en: "",
+  name_bn: "",
   label: "",
   component: "",
   ordering: "",
   roles: [],
-  parent_id:"",
-  type:""
+  parent_id: "",
+  type: ""
 });
 
 async function createMenu() {
@@ -134,8 +138,7 @@ async function createMenu() {
       form.value.name === "" ||
       form.value.label === "" ||
       form.value.component === "" ||
-      form.value.ordering === "" ||
-      form.value.type === ""
+      form.value.ordering === ""
     ) {
       is_validation.value = true;
       return;
@@ -154,6 +157,8 @@ async function createMenu() {
     spinner.value = false;
   }
 }
+
+const menu_type = ref(["Parent", "Child"])
 
 async function updateMenuByID(id) {
   try {
@@ -194,6 +199,7 @@ async function deleteMenu(id) {
       method: "DELETE",
       body: form.value,
     });
+    console.log('delete',response);
     // Remove the deleted user from the list
     const index = menu_list.value.findIndex((item) => item.id === id);
     if (index !== -1) {
@@ -354,15 +360,31 @@ async function handleApiError(error) {
         <template #body>
           <div class="flex flex-wrap pr-6 pl-3">
             <div class="flex items-start pt-4 w-full sm:w-1/2 lg:w-1/2">
-              <p class="w-56 pl-3 pr-3">Menu Name</p>
+              <p class="w-56 pl-3 pr-3">Menu Name English</p>
               <div class="flex flex-col items-start w-full">
-                <input type="text" v-model="form.name" :class="{
-                  'border-red-500': is_validation && form.name === '',
+                <input type="text" v-model="form.name_en" :class="{
+                  'border-red-500': is_validation && form.name_en === '',
                 }"
                   class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Enter name" />
-                <span v-if="is_validation && form.name === ''" class="text-red-500">
-                  Please enter menu name
+                <span v-if="is_validation && form.name_en === ''" class="text-red-500">
+                  Please enter menu english name
+                </span>
+                <span v-if="is_name_exist" class="text-red-500">
+                  {{ is_name_exist }}
+                </span>
+              </div>
+            </div>
+            <div class="flex items-start pt-4 w-full sm:w-1/2 lg:w-1/2">
+              <p class="w-56 pl-3 pr-3">Menu Name Bangla</p>
+              <div class="flex flex-col items-start w-full">
+                <input type="text" v-model="form.name_bn" :class="{
+                  'border-red-500': is_validation && form.name_bn === '',
+                }"
+                  class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Enter name" />
+                <span v-if="is_validation && form.name_bn === ''" class="text-red-500">
+                  Please enter menu bangla name
                 </span>
                 <span v-if="is_name_exist" class="text-red-500">
                   {{ is_name_exist }}
@@ -377,26 +399,13 @@ async function handleApiError(error) {
                 }"
                   class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Enter label" />
-                  <span v-if="is_validation && form.label === ''" class="text-red-500">Please enter label
-                  </span>
-                  <span v-if="is_label_exist" class="text-red-500">
-                    {{ is_label_exist }}
-                  </span>
-                </div>
+                <span v-if="is_validation && form.label === ''" class="text-red-500">Please enter label
+                </span>
+                <span v-if="is_label_exist" class="text-red-500">
+                  {{ is_label_exist }}
+                </span>
               </div>
-              <div class="flex items-start pt-4 w-full sm:w-1/2 lg:w-1/2">
-                <p class="w-56 pl-3 pr-3">Type</p>
-                <div class="flex flex-col items-start w-full">
-                  <input type="text" v-model="form.type" :class="{
-                    'border-red-500': is_validation && form.type === '',
-                  }"
-                    class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Enter name" />
-                  <span v-if="is_validation && form.type === ''" class="text-red-500">
-                    Please enter menu type
-                  </span>
-                </div>
-              </div>
+            </div>
             <div class="flex items-start pt-4 w-full sm:w-1/2 lg:w-1/2">
               <label for="activity"
                 class="w-56 block pl-3 pr-3 text-sm font-medium text-gray-900 dark:text-white">Component</label>
@@ -430,6 +439,19 @@ async function handleApiError(error) {
               </div>
             </div>
             <div class="flex items-start pt-4 w-full sm:w-1/2 lg:w-1/2">
+              <label for="menuType" class="w-56 block pl-3 pr-3 text-sm font-medium text-gray-900 dark:text-white">Menu
+                Type</label>
+              <div class="flex flex-col items-start w-full">
+                <select id="menuType" v-model="form.type" :class="{ 'border-red-500': is_validation && form.type === '' }"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option selected disabled value="">Select Type</option>
+                  <option v-for="(item, index) in menu_type" :key="index" :value="item">{{ item }}</option>
+                </select>
+                <span v-if="is_validation && form.type === ''" class="text-red-500">Please menu type</span>
+              </div>
+            </div>
+
+            <div v-if="form.type === 'Child'" class="flex items-start pt-4 w-full sm:w-1/2 lg:w-1/2">
               <label for="activity"
                 class="w-56 block pl-3 pr-3 text-sm font-medium text-gray-900 dark:text-white">Parent</label>
               <div class="flex flex-col items-start w-full">
@@ -439,7 +461,7 @@ async function handleApiError(error) {
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option selected disabled value="">Select Parent</option>
                   <option v-for="(item, index) in menus_for_parent_selections" :key="index" :value="item.id">
-                    {{ item.name }}
+                    {{ item.name_en }}
                   </option>
                 </select>
                 <span v-if="is_validation && form.parent_id === ''" class="text-red-500">Please select parent
@@ -457,8 +479,7 @@ async function handleApiError(error) {
                       :checked="item.id == form.roles.id"
                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
                     <label :for="'vue-checkbox-list' + item.id"
-                      class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{
-                        item.name }}
+                      class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ item.name_en }}
                     </label>
                   </div>
                 </li>
@@ -483,8 +504,9 @@ async function handleApiError(error) {
               </svg>
               Loading...
             </fwb-button>
-            <fwb-button v-else @click="console.log(isEditing)
-              ? updateMenuByID(menu_id) : createMenu()" color="green">
+            <fwb-button v-else @click="
+              console.log(isEditing) ? updateMenuByID(menu_id) : createMenu()
+              " color="green">
               {{ isEditing ? "Update" : "Submit" }}
             </fwb-button>
           </div>

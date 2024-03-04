@@ -15,11 +15,8 @@ use App\Http\Requests\Menu\MenuCreateOrUpdateRequest;
 class MenuManageController extends Controller
 {
     use JsonResponseTrait;
-    protected $menuRepository, $menuItemRepository;
-    public function __construct(MenuRepository $menuRepository, MenuItemRepository $menuItemRepository)
+    public function __construct(protected MenuRepository $menuRepository)
     {
-        $this->menuRepository = $menuRepository;
-        $this->menuItemRepository = $menuItemRepository;
     }
     /**
      * Display a listing of the resource.
@@ -32,7 +29,7 @@ class MenuManageController extends Controller
         $searchData = $request['searchData'];
 
         try {
-            // Gate::authorize('view', 'menus');
+            Gate::authorize('view', 'menus');
             $menus = $this->menuRepository->getAll($offset, $limit, $searchData, $option);
             $totalCount = $menus['count'];
             return $this->successJsonResponseWithLimitOffset('List of menus', $option, $offset, $limit, $totalCount, MenuResource::collection($menus['result']));
@@ -48,6 +45,8 @@ class MenuManageController extends Controller
     public function store(MenuCreateOrUpdateRequest $request)
     {
         try {
+            Gate::authorize('edit', 'menus');
+
             DB::beginTransaction();
             if (!empty($request->parent_id)) {
                 $menu = $this->menuRepository->create(
@@ -55,9 +54,7 @@ class MenuManageController extends Controller
                         "ordering" => $request->ordering
                     ]
                 );
-                // If menu creation is successful, proceed to handle role assignments
                 if ($menu) {
-                    // Attach roles to the menu
                     $roles = $request->input('role_id', []);
                     $menu->attachRolesToTheMenu()->attach($roles, ['parent_id' => $request->input('parent_id')]);
                 }
@@ -69,7 +66,6 @@ class MenuManageController extends Controller
                     ]
                 );
                 if ($menu) {
-                    // Attach roles to the menu
                     $roles = $request->input('role_id', []);
                     $menu->attachRolesToTheMenu()->attach($roles);
                 }
@@ -102,27 +98,31 @@ class MenuManageController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            if (empty($request->parent_id)) {
-                $menu = $this->menuRepository->updateByID(
-                    $id,
-                    $request->validated() + [
-                        "parent_id" => $request->parent_id,
-                        "ordering" => $request->ordering
-                    ]
-                );
-            } else {
-                $menu = $this->menuRepository->updateByID(
-                    $id,
-                    $request->validated() + [
-                        "role_id" => $request->role_id,
-                        "ordering" => $request->ordering,
-                        "parent_id" => $request->parent_id
-                    ]
-                );
-            }
+            Gate::authorize('edit', 'menus');
 
-            return $this->createdJsonResponse('Menu create successfully', new MenuResource($menu));
+            DB::beginTransaction();
+            if (!empty($request->parent_id)) {
+                $menu = $this->menuRepository->updateByID(
+                    $id,
+                    $request->except('role_id', 'parent_id')
+                );
+
+                if ($menu) {
+                    $roles = $request->input('role_id', []);
+                    $menu->attachRolesToTheMenu()->sync($roles, ['parent_id' => $request->input('parent_id')]);
+                }
+                return $this->successJsonResponse('Menu updated successfully', new MenuResource($menu));
+            } else {
+                $menu = $this->menuRepository->updateByID($id, $request->all());
+                $roles = $request->input('role_id', []);
+                $menu->attachRolesToTheMenu()->sync($roles);
+                DB::commit();
+                return $this->successJsonResponse('Menu updated successfully', new MenuResource($menu));
+            }
         } catch (\Exception $e) {
+            // Rollback transaction on error
+            DB::rollBack();
+
             return $this->errorJsonResponse('Error: ' . $e->getMessage());
         }
     }
@@ -133,7 +133,7 @@ class MenuManageController extends Controller
     public function destroy(string $id)
     {
         try {
-            // Gate::authorize('edit', 'menus');
+            Gate::authorize('edit', 'menus');
             $this->menuRepository->deletedByID($id);
             return $this->successJsonResponse('Menu delete successfully');
         } catch (\Exception $e) {
