@@ -9,7 +9,7 @@ export const storeUserData = defineStore({
     },
     actions: {
         addUserData(user_data: any) {
-            this.user_data = user_data
+            this.user_data = user_data.user
         },
         addLang(lang: string) {
             this.lang = lang

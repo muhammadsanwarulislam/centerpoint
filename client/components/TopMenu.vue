@@ -1,7 +1,6 @@
 <script setup>
 // Get Data from store
 const state_user_data = storeUserData()
-const user_data = state_user_data.user_data;
 const { addLang } = state_user_data
 
 // Get Data Auth user
@@ -111,7 +110,7 @@ const props = defineProps({
                                 class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                                 aria-expanded="false" data-dropdown-toggle="dropdown-user">
                                 <span class="sr-only">Open user menu</span>
-                                <img class="w-8 h-8 rounded-full" :src="user_data?.user?.image" alt="user photo">
+                                <img class="w-8 h-8 rounded-full" :src="state_user_data.user_data?.image ? state_user_data.user_data?.image : '/img/icon/profile.png'" alt="user photo">
                             </button>
                         </div>
 
@@ -119,10 +118,10 @@ const props = defineProps({
                             id="dropdown-user">
                             <div class="px-4 py-3" role="none">
                                 <p class="text-sm text-gray-900 dark:text-white" role="none">
-                                    {{ user_data?.user.username }}
+                                    {{ state_user_data.user_data?.username }}
                                 </p>
                                 <p class="text-sm font-medium text-gray-900 truncate dark:text-gray-300" role="none">
-                                    {{ user_data?.user.email }}
+                                    {{ state_user_data.user_data?.email }}
                                 </p>
                             </div>
                             <ul class="py-1" role="none">

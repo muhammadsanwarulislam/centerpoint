@@ -22,6 +22,7 @@ class MenuResource extends JsonResource
             "ordering"  => $this->ordering,
             "parent_id" => $this->parent_id,
             "type"      => $this->type,
+            "roles"     => $this->detachRolesToTheMenu,
         ];
     }
 }

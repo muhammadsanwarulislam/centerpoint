@@ -10,9 +10,7 @@ watch(
         component_id.value = value;
     }
 );
-
-const menus =
-    storeUserData().user_data.user.role.get_menus_according_to_the_role_id;
+const menus = storeUserData().user_data.role.get_menus_according_to_the_role_id;
 
 function loadComponent(component) {
     getComponent(component);

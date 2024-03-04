@@ -24,4 +24,9 @@ class Menu extends Model
     {
         return $this->belongsToMany(Role::class, 'menu_role_assignment');
     }
+
+    public function detachRolesToTheMenu()
+    {
+        return $this->belongsToMany(Role::class,'menu_role_assignment','menu_id');
+    }
 }
