@@ -11,6 +11,17 @@ class RoleRepository extends BaseRepository {
         return Role::class;
     }
 
+    protected function applyDefaultCriteria($query)
+    {
+        parent::applyDefaultCriteria($query);
+        $query->orderBy('created_at', 'desc');
+    }
+
+    protected function getSearchFields()
+    {
+        return ['name'];
+    }
+
     public function getRoleIdByName($roleName = null)
     {
         $role =  $this->model()::select('id')->where('name', $roleName)->firstOrFail();

@@ -11,4 +11,15 @@ class MenuRepository extends BaseRepository
     {
         return Menu::class;
     }
+
+    protected function applyDefaultCriteria($query)
+    {
+        parent::applyDefaultCriteria($query);
+        $query->orderBy('created_at', 'desc');
+    }
+
+    protected function getSearchFields()
+    {
+        return ['name'];
+    }
 }

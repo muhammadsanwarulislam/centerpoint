@@ -10,6 +10,17 @@ class PermissionRepository extends BaseRepository {
         return Permission::class;
     }
 
+    protected function applyDefaultCriteria($query)
+    {
+        parent::applyDefaultCriteria($query);
+        $query->orderBy('created_at', 'desc');
+    }
+
+    protected function getSearchFields()
+    {
+        return ['name'];
+    }
+
     function getAllPermissionsForSeeder() 
     {
         return $this->model()::all();

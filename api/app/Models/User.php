@@ -45,9 +45,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected $dispatchesEvents = [
-        'created' => SentRegisteredUserEmailEvent::class
-    ];
+    // protected $dispatchesEvents = [
+    //     'created' => SentRegisteredUserEmailEvent::class
+    // ];
 
     /**
      * The attributes that hashing password

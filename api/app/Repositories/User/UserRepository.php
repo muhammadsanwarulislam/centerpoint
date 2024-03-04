@@ -5,6 +5,8 @@ namespace Repository\User;
 use App\Models\User;
 use Hamcrest\Type\IsBoolean;
 use Repository\BaseRepository;
+use Illuminate\Support\Facades\Auth;
+
 class UserRepository extends BaseRepository
 {
 
@@ -13,6 +15,17 @@ class UserRepository extends BaseRepository
         return User::class;
     }
 
+    protected function applyDefaultCriteria($query)
+    {
+        parent::applyDefaultCriteria($query);
+        $query->where('id', '<>', Auth::id());
+    }
+
+    protected function getSearchFields()
+    {
+        return ['username', 'email'];
+    }
+    
     public function getAllUsersWithRole()
     {
         return $this->model()::with('role')->paginate(10);

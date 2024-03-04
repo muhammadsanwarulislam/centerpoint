@@ -15,51 +15,22 @@ Abstract class BaseRepository {
     public function getAll($offset, $limit, $searchData = null, $option = null)
     {
         $query = $this->model()::query();
-        $searchFields = [];
-
-        if ($this->model() == User::class) {
-            $query->where('id', '<>', Auth::id())->orderBy('created_at', 'desc');
-            $searchFields = ['username', 'email'];
-        } elseif ($this->model() == Role::class) {
-            $query->orderBy('created_at', 'desc');
-            $searchFields = ['name'];
-        }elseif ($this->model() == Permission::class) {
-            $query->orderBy('created_at', 'desc');
-            $searchFields = ['name'];
-        } 
-
+        $this->applyDefaultCriteria($query);
 
         switch ($option) {
             case 'list':
-                $result = $query->offset(($offset - 1) * $limit)
-                    ->limit($limit)
-                    ->get();
-                $count = $query->paginate($limit)->total();
+                $result = $this->paginateResult($query, $offset, $limit);
                 break;
 
             case 'search':
                 if ($searchData) {
-                    $query->where(function ($query) use ($searchFields, $searchData) {
-                        foreach ($searchFields as $field) {
-                            $query->orWhere($field, 'like', '%' . $searchData . '%');
-                        }
-                    });
-
-                    $result = $query->offset(($offset - 1) * $limit)
-                        ->limit($limit)
-                        ->get();
-                    $count = $query->paginate($limit)->total();
-                } elseif (empty($searchData)) {
-                    $result = $query->offset(($offset - 1) * $limit)
-                        ->limit($limit)
-                        ->get();
-                    $count = $query->paginate($limit)->total();
+                    $this->applySearchCriteria($query, $searchData);
                 }
+                $result = $this->paginateResult($query, $offset, $limit);
                 break;
 
             default:
                 $result = $query->get();
-                $count = $query->paginate($limit)->total();
                 break;
         }
 
@@ -67,9 +38,40 @@ Abstract class BaseRepository {
             throw new \RuntimeException('No records found.');
         }
 
-        return ['result' => $result, 'count' => $count];
+        return ['result' => $result, 'count' => $this->getTotalCount($query, $limit)];
     }
 
+    protected function applyDefaultCriteria($query)
+    {
+        $query->orderBy('created_at', 'desc');
+    }
+
+    protected function applySearchCriteria($query, $searchData)
+    {
+        $searchFields = $this->getSearchFields();
+        $query->where(function ($query) use ($searchFields, $searchData) {
+            foreach ($searchFields as $field) {
+                $query->orWhere($field, 'like', '%' . $searchData . '%');
+            }
+        });
+    }
+
+    protected function paginateResult($query, $offset, $limit)
+    {
+        return $query->offset(($offset - 1) * $limit)
+            ->limit($limit)
+            ->get();
+    }
+
+    protected function getTotalCount($query, $limit)
+    {
+        return $query->paginate($limit)->total();
+    }
+
+    protected function getSearchFields()
+    {
+        return [];
+    }
     public function findByID($id): Model
     {
         return $this->model()::find($id);
