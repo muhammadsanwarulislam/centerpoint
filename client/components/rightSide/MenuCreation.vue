@@ -73,8 +73,7 @@ async function getMenuByID(id) {
     });
     let data = response.data;
     form.value = {
-      name_en: data.name_en,
-      name_bn: data.name_bn,
+      name: data.name,
       label: data.label,
       component: data.component,
       ordering: data.ordering,
@@ -101,8 +100,7 @@ function closeModal() {
   is_validation.value = false;
   reset();
   form.value = {
-    name_en: "",
-    name_bn: "",
+    name: "",
     label: "",
     component: "",
     ordering: "",
@@ -121,8 +119,7 @@ function showModal(id) {
 // post create menu
 const spinner = ref(false);
 const form = ref({
-  name_en: "",
-  name_bn: "",
+  name: "",
   label: "",
   component: "",
   ordering: "",
@@ -360,31 +357,15 @@ async function handleApiError(error) {
         <template #body>
           <div class="flex flex-wrap pr-6 pl-3">
             <div class="flex items-start pt-4 w-full sm:w-1/2 lg:w-1/2">
-              <p class="w-56 pl-3 pr-3">Menu Name English</p>
+              <p class="w-56 pl-3 pr-3">Menu Name</p>
               <div class="flex flex-col items-start w-full">
-                <input type="text" v-model="form.name_en" :class="{
-                  'border-red-500': is_validation && form.name_en === '',
+                <input type="text" v-model="form.name" :class="{
+                  'border-red-500': is_validation && form.name === '',
                 }"
                   class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Enter name" />
-                <span v-if="is_validation && form.name_en === ''" class="text-red-500">
-                  Please enter menu english name
-                </span>
-                <span v-if="is_name_exist" class="text-red-500">
-                  {{ is_name_exist }}
-                </span>
-              </div>
-            </div>
-            <div class="flex items-start pt-4 w-full sm:w-1/2 lg:w-1/2">
-              <p class="w-56 pl-3 pr-3">Menu Name Bangla</p>
-              <div class="flex flex-col items-start w-full">
-                <input type="text" v-model="form.name_bn" :class="{
-                  'border-red-500': is_validation && form.name_bn === '',
-                }"
-                  class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Enter name" />
-                <span v-if="is_validation && form.name_bn === ''" class="text-red-500">
-                  Please enter menu bangla name
+                <span v-if="is_validation && form.name === ''" class="text-red-500">
+                  Please enter menu name
                 </span>
                 <span v-if="is_name_exist" class="text-red-500">
                   {{ is_name_exist }}
@@ -461,7 +442,7 @@ async function handleApiError(error) {
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option selected disabled value="">Select Parent</option>
                   <option v-for="(item, index) in menus_for_parent_selections" :key="index" :value="item.id">
-                    {{ item.name_en }}
+                    {{ item.name }}
                   </option>
                 </select>
                 <span v-if="is_validation && form.parent_id === ''" class="text-red-500">Please select parent
@@ -479,7 +460,7 @@ async function handleApiError(error) {
                       :checked="item.id == form.roles.id"
                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
                     <label :for="'vue-checkbox-list' + item.id"
-                      class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ item.name_en }}
+                      class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ item.name }}
                     </label>
                   </div>
                 </li>

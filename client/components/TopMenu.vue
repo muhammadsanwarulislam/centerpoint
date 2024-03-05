@@ -8,9 +8,7 @@ const { user = {}, logout } = useAuth();
 
 // Change Language
 const { locale, t } = useI18n();
-const state = storeUserData()
-
-const selected_lang = ref(state.lang ? state.lang : 'en')
+const selected_lang = ref(state_user_data.lang ? state_user_data.lang : 'en')
 locale.value = selected_lang.value
 
 function changeLanguage() {
@@ -94,23 +92,14 @@ const props = defineProps({
                                 <span class="slider"></span>
                                 <span class="labels" :data-on="selected_lang === 'bn' ? 'bn' : 'BN'"
                                     :data-off="selected_lang === 'en' ? 'en' : 'EN'"></span>
-                                <!-- <span class="labels" :data-on="selected_lang" :data-off="selected_lang"></span> -->
                             </label>
-
-                            <!-- {{ state.lang }} -->
-                            <!-- <form class="flex items-center justify-center pr-3">
-									<select v-model="selected_lang" @change="changeLanguage">
-										<option value="en">en</option>
-										<option value="bn">bn</option>
-									</select>
-								</form> -->
                         </div>
                         <div>
                             <button type="button"
                                 class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                                 aria-expanded="false" data-dropdown-toggle="dropdown-user">
                                 <span class="sr-only">Open user menu</span>
-                                <img class="w-8 h-8 rounded-full" :src="state_user_data.user_data?.image ? state_user_data.user_data?.image : '/img/icon/profile.png'" alt="user photo">
+                                <img class="w-8 h-8 rounded-full" src="/assets/img/icon/profile.png" alt="user photo">
                             </button>
                         </div>
 

@@ -29,17 +29,18 @@ watch(() => storeUserData().get_component, (value) => {
 </script>
 
 <template>
-    <TopMenu :title="title='dashboard'" />
-    <div class="p-4 sm:ml-64 dashboard_close">
-        <div class="p-4 rounded-lg dark:border-gray-700">
-            <LeftSide />
-            <ClientOnly>
-                <KeepAlive>
-                    <component :is="getComponent" />
-                </KeepAlive>
-            </ClientOnly>
+    <div>
+        <TopMenu :title="title='dashboard'" />
+        <div class="p-4 sm:ml-64 dashboard_close">
+            <div class="p-4 rounded-lg dark:border-gray-700">
+                <LeftSide />
+                <ClientOnly>
+                    <KeepAlive>
+                        <component :is="getComponent" />
+                    </KeepAlive>
+                </ClientOnly>
+            </div>
         </div>
     </div>
 </template>
 
-<style></style>

@@ -199,7 +199,7 @@ async function handleApiError(error) {
   <div>
     <h1 class="text-2xl font-bold pb-3">User Creations</h1>
     <div class="flex flex-wrap">
-      <div v-for="item in 4" :key="item" class="w-full sm:w-1/2 lg:w-1/4 pr-3 pb-3">
+      <!-- <div v-for="item in 4" :key="item" class="w-full sm:w-1/2 lg:w-1/4 pr-3 pb-3">
         <div
           class="block max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
           <div class="flex justify-center items-center py-2">
@@ -209,7 +209,7 @@ async function handleApiError(error) {
             Total Collection
           </h5>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="flex flex-wrap gap-3 items-center justify-between pt-3 pb-5">
       <div class="bg-white xs:w-full sm:w-full md:w-2/5 lg:w-2/5 sm-w-100">
@@ -229,7 +229,7 @@ async function handleApiError(error) {
       </div>
 
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <div class="flex flex-wrap items-center gap-3 sm-justify-end">
+        <!-- <div class="flex flex-wrap items-center gap-3 sm-justify-end">
           <div class="flex items-center">
             <span class="text-gray-700 dark:text-gray-400 pr-3">From</span>
             <input type="date"
@@ -242,8 +242,8 @@ async function handleApiError(error) {
               class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Select Date">
           </div>
-        </div>
-        <button class="button bg-white">
+        </div> -->
+        <!-- <button class="button bg-white">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_13_324)">
               <path
@@ -276,7 +276,7 @@ async function handleApiError(error) {
               </clipPath>
             </defs>
           </svg>
-        </button>
+        </button> -->
         <button class="button btn" @click="showModal">+ Add User</button>
       </div>
     </div>

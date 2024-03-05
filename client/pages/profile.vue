@@ -14,14 +14,16 @@ const status = computed(() => {
 
 </script>
 <template>
-	<TopMenu :title="title = 'profile'" />
-	<div class="p-4">
-		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-			<h3 class="text-xl font-bold">Authentication Overview</h3>
-			<p class="text-sm mb-4">See all available authentication & session information below.</p>
-			<pre class="pre-auth" v-if="status"><span>Status:</span> {{ status }}</pre>
-			<AuthenticationStatus />
-			<pre class="pre-auth" v-if="user"><span>Data:</span> {{ user }}</pre>
+	<div>
+		<TopMenu :title="title = 'profile'" />
+		<div class="p-4 sm:ml-64 dashboard_close">
+			<div class="p-4 rounded-lg dark:border-gray-700">
+				<h3 class="text-xl font-bold">Authentication Overview</h3>
+				<p class="text-sm mb-4">See all available authentication & session information below.</p>
+				<pre class="pre-auth" v-if="status"><span>Status:</span> {{ status }}</pre>
+				<AuthenticationStatus />
+				<pre class="pre-auth" v-if="user"><span>Data:</span> {{ user }}</pre>
+			</div>
 		</div>
 	</div>
 </template>
