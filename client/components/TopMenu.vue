@@ -45,6 +45,33 @@ const props = defineProps({
     // default: 'dashboard'
   },
 });
+
+const apiData = ref({});
+
+const isModalVisible = ref(false);
+
+const openModal = (id) => {
+  if (id) {
+    getUserByID(id);
+  }
+  isModalVisible.value = true;
+};
+
+const closeModal = () => {
+  isModalVisible.value = false;
+};
+
+//Get user by ID
+async function getUserByID(id) {
+  try {
+    const response = await $http(`/users/${id}`, {
+      method: "GET",
+    });
+    apiData.value = response;
+  } catch (error) {
+    console.log(error);
+  }
+}
 </script>
 
 <template>
@@ -168,6 +195,11 @@ const props = defineProps({
               </div>
               <ul class="py-1" role="none">
                 <li>
+                  <a href="#" @click="openModal(state_user_data.user_data?.id)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">
+                  Profile 
+                </a>
+                </li>
+                <li>
                   <a
                     href="#"
                     @click="logout"
@@ -183,6 +215,8 @@ const props = defineProps({
       </div>
     </div>
     <!-- Top Menu End-->
+
+    <Modal :show="isModalVisible" @close="closeModal" :apiData="apiData"></Modal>
   </div>
 </template>
 

@@ -118,11 +118,6 @@ function hasSubmenu(menuId) {
             </template>
           </template>
         </ul>
-        <ul
-          class="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700"
-        >
-          <nuxt-link class="ml-5" to="/profile">Profile</nuxt-link>
-        </ul>
       </div>
     </aside>
     <!-- Left Side End -->

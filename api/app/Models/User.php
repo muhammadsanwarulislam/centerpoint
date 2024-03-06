@@ -45,9 +45,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // protected $dispatchesEvents = [
-    //     'created' => SentRegisteredUserEmailEvent::class
-    // ];
+    protected $dispatchesEvents = [
+        'created' => SentRegisteredUserEmailEvent::class
+    ];
 
     /**
      * The attributes that hashing password
@@ -67,5 +67,9 @@ class User extends Authenticatable
 
     public function hasAccess($access) {
         return $this->permissions()->contains($access);
+    }
+
+    public function profile() {
+        return $this->hasOne(Profile::class);
     }
 }
