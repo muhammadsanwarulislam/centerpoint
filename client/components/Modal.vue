@@ -17,11 +17,6 @@ const props = defineProps({
 	apiData: Object,
 });
 
-// Create a reactive copy of the user data to edit
-const editedUserData = ref({ ...props.apiData });
-console.log(editedUserData);
-
-
 // Method to close the modal
 const closeModal = () => {
 	// Emit the close event to parent component
@@ -69,6 +64,25 @@ const maxWidthClass = computed(() => {
 		"2xl": "sm:max-w-2xl",
 	}[props.maxWidth];
 });
+// Method to update the user's profile
+const updateProfile = async () => {
+    try {
+        const response = await fetch(`/users/${props.apiData.data.id}/profile`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(props.apiData.data.profile),
+        });
+        // Handle the response, show success message, etc.
+        console.log("Profile updated successfully:", response);
+        // Close the modal after updating the profile
+        closeModal();
+    } catch (error) {
+        // Handle errors
+        console.error("Error updating profile:", error);
+    }
+};
 </script>
 
 <template>
@@ -91,7 +105,7 @@ const maxWidthClass = computed(() => {
 					<div v-show="show"
 						class="mb-6 bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto"
 						:class="maxWidthClass">
-						<form class="p-4 md:p-5">
+						<form @submit.prevent="updateProfile" class="p-4 md:p-5">
 							<div class="grid gap-4 mb-4 grid-cols-2">
 								<div class="col-span-2">
 									<label for="name"
