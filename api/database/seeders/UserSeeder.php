@@ -6,15 +6,13 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Repository\Role\RoleRepository;
-use Repository\User\ProfileRepository;
 use Repository\User\UserRepository;
 
 class UserSeeder extends Seeder
 {
     function __construct(
         protected UserRepository $userRepository, 
-        protected RoleRepository $roleRepository,
-        protected ProfileRepository $profileRepository
+        protected RoleRepository $roleRepository
     ) {}
 
     /**
@@ -57,11 +55,11 @@ class UserSeeder extends Seeder
                     'created_at' => now(),
                 ]
             );
-
-            // Create profile for the user
-            $this->profileRepository->create([
-                'user_id' => $user->id,
-            ]);
+            if (!$user->profile) {
+                $user->profile()->create([
+                    'user_id' => $user->id,
+                ]);
+            }
         }
     }
 }

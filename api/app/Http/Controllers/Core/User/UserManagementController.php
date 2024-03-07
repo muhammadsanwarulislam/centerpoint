@@ -17,11 +17,8 @@ class UserManagementController extends Controller
 {
     use JsonResponseTrait;
 
-    protected $userRepository;
-
-    public function __construct(UserRepository $userRepository)
+    public function __construct(protected UserRepository $userRepository)
     {
-        $this->userRepository = $userRepository;
     }
     /**
      * Display a listing of the resource.
@@ -85,8 +82,19 @@ class UserManagementController extends Controller
     {
         try {
             Gate::authorize('edit', 'users');
-            $user = $this->userRepository->updateByID($id, $request->all());
-            return $this->createdJsonResponse('User update successfully', ['user' => new UserResource($user)]);
+            if(!empty($request['username'] || $request['email'] || $request['role_id'])) {
+                $user = $this->userRepository->updateByID($id, $request->only(['username','email','role_id']));
+                return $this->createdJsonResponse('User update successfully', ['user' => new UserResource($user)]);
+            } else {
+                $user = $this->userRepository->findOrFailByID($id);
+                if ($user->profile) {
+                    $profileData = $request->except(['username', 'email', 'role_id']);
+                    $user->profile->update($profileData);
+                }
+                return $this->createdJsonResponse('User update successfully', ['user' => new UserResource($user)]);
+            }
+
+
         } catch (\Exception $e) {
             return $this->errorJsonResponse('Error: ' . $e->getMessage());
         }
