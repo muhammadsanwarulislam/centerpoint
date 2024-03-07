@@ -67,7 +67,7 @@ async function getUserByID(id) {
     const response = await $http(`/users/${id}`, {
       method: "GET",
     });
-    apiData.value = response;
+    apiData.value = response.data.profile;
   } catch (error) {
     console.log(error);
   }
