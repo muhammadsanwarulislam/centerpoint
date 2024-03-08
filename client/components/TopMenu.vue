@@ -72,6 +72,16 @@ async function getUserByID(id) {
     console.log(error);
   }
 }
+
+// Define form fields for user profile
+const userFormFields = [
+  { label: "First Name", name: "first_name", type: "text" },
+  { label: "Last Name", name: "last_name", type: "text" },
+  { label: "Gender", name: "gender", type: "text" },
+  { label: "Date of birth", name: "dob", type: "date" },
+  { label: "Blood Group", name: "blood_group", type: "text" },
+  { label: "Religion", name: "religion", type: "text" },
+];
 </script>
 
 <template>
@@ -216,7 +226,16 @@ async function getUserByID(id) {
     </div>
     <!-- Top Menu End-->
 
-    <Modal :show="isModalVisible" @close="closeModal" :apiData="apiData"></Modal>
+    <!-- Profile Modal -->
+  <Modal
+    v-if="isModalVisible"
+    :show="isModalVisible"
+    :apiData="apiData"
+    :formFields="userFormFields"
+    :apiEndpoint="`/users/${apiData.user_id}`" 
+    :method="'PUT'"
+    @close="closeModal"
+  />
   </div>
 </template>
 
